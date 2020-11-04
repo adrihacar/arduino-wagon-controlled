@@ -13,6 +13,9 @@
 
 void setup() 
 {
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(9, INPUT);
   pinMode(8, INPUT);
@@ -23,6 +26,9 @@ void setup()
 // --------------------------------------
 double speed = 55.5; //Velocidad media
 char slope[] = "FLAT";
+int acc = 0;
+int breack = 0;
+int mixer = 0;
 bool request_received = false; 
 bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
@@ -114,6 +120,75 @@ int slope_req()
 }
 
 // --------------------------------------
+// Function: acc_req
+// --------------------------------------
+int acc_req()
+{
+      if ( (request_received) &&
+        (0 == strcmp("GAS: SET",answer)) ) {
+           acc = 1;
+           digitalWrite(13, acc);
+           request_received = false;
+           answer_requested = true;
+        }
+
+      else if( (request_received) &&
+        (0 == strcmp("GAS: CLR",answer)) ){
+           acc = 0;
+           digitalWrite(13, acc);
+           request_received = false;
+           answer_requested = true;
+        }
+   return 0;
+}
+
+// --------------------------------------
+// Function: break_req
+// --------------------------------------
+int break_req()
+{
+      if ( (request_received) &&
+        (0 == strcmp("BRK: SET",answer)) ) {
+           breack = 1;
+           digitalWrite(12, breack);
+           request_received = false;
+           answer_requested = true;
+        }
+
+      else if( (request_received) &&
+        (0 == strcmp("BRK: CLR",answer)) ){
+           breack = 0;
+           digitalWrite(12, breack);
+           request_received = false;
+           answer_requested = true;
+        }
+   return 0;
+}
+
+// --------------------------------------
+// Function: mixer_req
+// --------------------------------------
+int mixer_req()
+{
+   if ( (request_received) &&
+        (0 == strcmp("MIX: SET",answer)) ) {
+           mixer = 1;
+           digitalWrite(10, mixer);
+           request_received = false;
+           answer_requested = true;
+        }
+
+      else if( (request_received) &&
+        (0 == strcmp("MIX: CLR",answer)) ){
+           mixer = 0;
+           digitalWrite(10, mixer);
+           request_received = false;
+           answer_requested = true;
+        }
+   return 0;
+}
+
+// --------------------------------------
 // Function: get_slope
 // --------------------------------------
 int get_slope()
@@ -139,8 +214,25 @@ int get_slope()
 // --------------------------------------
 int show_speed()
 {
+   if(acc==1){
+      //V = Vo + A T; A = 0.5
+      speed = speed + 0.5*t;
+   }
+   if(breack==1){
+      //V = Vo + A T; A= -0.5
+      speed = speed + (-0.5)*t;
+   }
+   if(0 == strcmp("UP",slope){
+      //V = Vo + A T; A= -0.25
+      speed = speed + (-0.25)*t;
+   }
+   if(0 == strcmp("DOWN",slope){
+      //V = Vo + A T; A= 0.25
+      speed = speed + 0.25*t;
+   }
+
    int ligth_speed = map (speed, 0, 70, 0, 255);
-   digitalRead(10, ligth_speed);
+   digitalWrite(10, ligth_speed);
 
    return 0;
 }
@@ -165,8 +257,10 @@ void setup()
 // --------------------------------------
 void loop()
 {
+   //para cuando se lo piden, devolverlo
     speed_req();
     slope_req();
+   //Chechealr internamente los datos - Pagar luces, leer slope, velociad, etc.
     show_speed();
     check_slope();
 }
