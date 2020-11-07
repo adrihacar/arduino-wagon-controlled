@@ -11,21 +11,13 @@
 #define SLAVE_ADDR 0x8
 #define MESSAGE_SIZE 8
 
-void setup() 
-{
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(9, INPUT);
-  pinMode(8, INPUT);
-}
-
 // --------------------------------------
 // Global Variables
 // --------------------------------------
 double speed = 55.5; //Velocidad media
 char slope[] = "FLAT";
+int ligth = 0;
+int lamp = 0;
 int acc = 0;
 int brk = 0;
 int mixer = 0;
@@ -109,7 +101,32 @@ int slope_req()
    if ( (request_received) &&
         (0 == strcmp("SLP: REQ",request)) ) {
       // send the answer for slope request
-      sprintf(answer,"SLP:%s",slope);
+      if(0 == strcmp("UP",slope){
+         sprintf(answer,"SLP:  %s",slope);
+      } else{
+         sprintf(answer,"SLP:%s",slope);
+      }
+
+      // set buffers and flags
+      memset(request,'\0', MESSAGE_SIZE+1);
+      request_received = false;
+      answer_requested = true;
+   }
+   return 0;
+}
+
+// --------------------------------------
+// Function: ligth_req
+// --------------------------------------
+int ligth_req()
+{
+   // while there is enough data for a request
+   if ( (request_received) &&
+        (0 == strcmp("LIT: REQ",request)) ) {
+      char num_str[5];
+      dtostrf(ligth,4,1,num_str);
+      // send the answer for slope request
+      sprintf(answer,"LIT:%s",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -190,11 +207,33 @@ int mixer_req()
 }
 
 // --------------------------------------
+// Function: lamp_req
+// --------------------------------------
+int lamp_req()
+{
+   if ( (request_received) &&
+        (0 == strcmp("LAM: SET",request)) ) {
+           lamp = 1;
+           digitalWrite(7, lamp);
+           request_received = false;
+           answer_requested = true;
+        }
+
+      else if( (request_received) &&
+        (0 == strcmp("LAM: CLR",request)) ){
+           lamp = 0;
+           digitalWrite(7, lamp);
+           request_received = false;
+           answer_requested = true;
+        }
+   return 0;
+}
+
+// --------------------------------------
 // Function: get_slope
 // --------------------------------------
 int get_slope()
 {
-   int value = 0;
    if(digitalRead(9)==1){
       slope = "DOWN"
    }
@@ -236,9 +275,19 @@ int show_speed()
    speed = speed + a*t;
 
    int ligth_speed = map (speed, 0, 70, 0, 255);
-   digitalWrite(10, ligth_speed);
+   analogWrite(10, ligth_speed);
 
    return 0;
+}
+
+// --------------------------------------
+// Function: get_ligth
+// --------------------------------------
+int get_ligth()
+{
+  int value = 0;
+  value = analogRead(0);
+  ligth = map (value, 0, 1023, 0, 100);
 }
 
 // --------------------------------------
@@ -254,6 +303,14 @@ void setup()
   
   // Function to run when data received from master
   Wire.onReceive(receiveEvent);
+
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, INPUT);
+  pinMode(8, INPUT);
+  pinMode(7, OUTPUT);
 }
 
 // --------------------------------------

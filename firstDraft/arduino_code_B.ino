@@ -120,6 +120,25 @@ int slope_req()
 }
 
 // --------------------------------------
+// Function: ligth_req
+// --------------------------------------
+int ligth_req()
+{
+   // while there is enough data for a request
+   if ( (request_received) &&
+        (0 == strcmp("SLP: REQ",request)) ) {
+      // send the answer for slope request
+      sprintf(answer,"SLP:%s",slope);
+
+      // set buffers and flags
+      memset(request,'\0', MESSAGE_SIZE+1);
+      request_received = false;
+      answer_requested = true;
+   }
+   return 0;
+}
+
+// --------------------------------------
 // Function: acc_req
 // --------------------------------------
 int acc_req()
@@ -194,7 +213,6 @@ int mixer_req()
 // --------------------------------------
 int get_slope()
 {
-   int value = 0;
    if(digitalRead(9)==1){
       slope = "DOWN"
    }
@@ -239,6 +257,14 @@ int show_speed()
    digitalWrite(10, ligth_speed);
 
    return 0;
+}
+
+// --------------------------------------
+// Function: get_ligth
+// --------------------------------------
+int get_ligth()
+{
+   
 }
 
 // --------------------------------------

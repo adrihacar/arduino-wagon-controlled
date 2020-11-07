@@ -11,16 +11,6 @@
 #define SLAVE_ADDR 0x8
 #define MESSAGE_SIZE 8
 
-void setup() 
-{
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(9, INPUT);
-  pinMode(8, INPUT);
-}
-
 // --------------------------------------
 // Global Variables
 // --------------------------------------
@@ -109,7 +99,11 @@ int slope_req()
    if ( (request_received) &&
         (0 == strcmp("SLP: REQ",request)) ) {
       // send the answer for slope request
-      sprintf(answer,"SLP:%s",slope);
+      if(0 == strcmp("UP",slope){
+         sprintf(answer,"SLP:  %s",slope);
+      } else{
+         sprintf(answer,"SLP:%s",slope);
+      }
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -254,6 +248,13 @@ void setup()
   
   // Function to run when data received from master
   Wire.onReceive(receiveEvent);
+
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, INPUT);
+  pinMode(8, INPUT);
 }
 
 // --------------------------------------
