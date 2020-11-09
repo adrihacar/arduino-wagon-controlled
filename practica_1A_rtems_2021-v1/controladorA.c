@@ -18,6 +18,9 @@
 
 #include "displayA.h"
 
+#define BILLION  1E9
+
+
 /**********************************************************
  *  Constants
  **********************************************************/
@@ -239,24 +242,50 @@ int task_slope()
 //-------------------------------------
 void *controller(void *arg)
 {
-    // Endless loop
-    while(1) {//each cycle should be 45 seconds
+	int secondary_cycle = 0;
+	long elapsed_time = 0;
+	struct timespec start, end;
+    // Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+    while(1) {
+    	clock_gettime(CLOCK_REALTIME, &start);
+    	switch(secondary_cycle){
 
-    	task_mix(); //takes 0.5 s
-    	for(int i = 0; i < 11 ; i++){ //this loop takes 4s and is executed 11 times
-            // calling task of speed
-            task_speed(); //takes 0.5s
-
-            // calling task of slope
-            task_slope(); //takes 0.5s
-
-            // turning on or off the gas
-            task_gas(); //takes 0.5s
-
-            // turning on or off the brake
-            task_brk(); //takes 0.5s
+    		case 0:
+    			task_mix();
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 1:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 2:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 3:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 4:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
     	}
-    	sleep(0.5);
+    	secondary_cycle = (secondary_cycle + 1) % 5;
+    	clock_gettime(CLOCK_REALTIME, &end);
+    	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+    	sleep(9 - elapsed_time);
     }
 }
 
