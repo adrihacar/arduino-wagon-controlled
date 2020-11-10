@@ -25,7 +25,7 @@ void setup()
 // Global Variables
 // --------------------------------------
 double speed = 55.5; //Velocidad media
-char slope[] = "FLAT";
+int slope = 0;
 int acc = 0;
 int brk = 0;
 int mixer = 0;

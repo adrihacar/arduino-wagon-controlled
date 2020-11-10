@@ -15,7 +15,7 @@
 // Global Variables
 // --------------------------------------
 double speed = 55.5; //Velocidad media
-char slope[] = "FLAT";
+int slope = 0;
 int ligth = 0;
 int lamp = 0;
 int acc = 0;
@@ -100,12 +100,17 @@ int slope_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("SLP: REQ",request)) ) {
-      // send the answer for slope request
-      if(0 == strcmp("UP",slope){
-         sprintf(answer,"SLP:  %s",slope);
-      } else{
-         sprintf(answer,"SLP:%s",slope);
-      }
+           if(slope == 0){
+            // send the answer for slope request
+            sprintf(answer,"SLP:FLAT");
+           }
+           else if (slope == 1){
+            sprintf(answer,"SLP:  UP");
+           }
+           else if (slope == -1){
+            sprintf(answer,"SLP:DOWN");
+           }
+      
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -124,9 +129,9 @@ int ligth_req()
    if ( (request_received) &&
         (0 == strcmp("LIT: REQ",request)) ) {
       char num_str[5];
-      dtostrf(ligth,4,1,num_str);
+      dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
-      sprintf(answer,"LIT:%s",ligth);
+      sprintf(answer,"LIT:%s%",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -147,6 +152,7 @@ int acc_req()
            digitalWrite(13, acc);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"GAS:  OK");
         }
 
       else if( (request_received) &&
@@ -155,8 +161,8 @@ int acc_req()
            digitalWrite(13, acc);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"GAS:  OK");
         }
-   sprintf(answer,"GAS:  OK");
    return 0;
 }
 
@@ -171,6 +177,7 @@ int break_req()
            digitalWrite(12, brk);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"BRK:  OK");
         }
 
       else if( (request_received) &&
@@ -179,6 +186,7 @@ int break_req()
            digitalWrite(12, brk);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"BRK:  OK");
         }
    return 0;
 }
@@ -194,6 +202,7 @@ int mixer_req()
            digitalWrite(10, mixer);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"MIX:  OK");
         }
 
       else if( (request_received) &&
@@ -202,6 +211,7 @@ int mixer_req()
            digitalWrite(10, mixer);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"MIX:  OK");
         }
    return 0;
 }
@@ -217,6 +227,7 @@ int lamp_req()
            digitalWrite(7, lamp);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"LAM:  OK");
         }
 
       else if( (request_received) &&
@@ -225,6 +236,7 @@ int lamp_req()
            digitalWrite(7, lamp);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"LAM:  OK");
         }
    return 0;
 }
@@ -234,21 +246,21 @@ int lamp_req()
 // --------------------------------------
 int get_slope()
 {
+   int value = 0;
    if(digitalRead(9)==1){
-      slope = "DOWN"
+      slope = -1;
    }
 
    if(digitalRead(8)==1){
-      slope = "UP"
+      slope = 1;
    } 
 
    else{
-      slope = "FLAT"
+      slope = 0;
    }
 
    return 0;
 }
-
 // --------------------------------------
 // Function: show_speed
 // --------------------------------------
@@ -259,15 +271,15 @@ int show_speed()
       //V = Vo + A T; A = 0.5
       a = a + 0.5;
    }
-   if(brk==1){
+   else if(brk==1){
       //V = Vo + A T; A= -0.5
        a = a - 0.5;
    }
-   if(0 == strcmp("UP",slope)){
+   if(slope == -1){
       //V = Vo + A T; A= -0.25
       a = a - 0.25;
    }
-   if(0 == strcmp("DOWN",slope)){
+   else if(slope == 1){
       //V = Vo + A T; A= 0.25
       a = a + 0.25;
    }
@@ -275,7 +287,7 @@ int show_speed()
    speed = speed + a*t;
 
    int ligth_speed = map (speed, 0, 70, 0, 255);
-   analogWrite(10, ligth_speed);
+   digitalWrite(10, ligth_speed);
 
    return 0;
 }
@@ -287,7 +299,7 @@ int get_ligth()
 {
   int value = 0;
   value = analogRead(0);
-  ligth = map (value, 0, 1023, 0, 100);
+  ligth = map (value, 0, 1023, 0, 99);
 }
 
 // --------------------------------------

@@ -1,0 +1,6 @@
+speed slope ligth... requirements = 0,0002 segundos
+gas break lamp ... hacer cosas = 0,000156 segundos
+
+calcular velocidad = 0,000148 segundos
+calcular pendiente = 0,000064 segundos
+calcular luz externa = 

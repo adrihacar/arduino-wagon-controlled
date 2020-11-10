@@ -11,21 +11,14 @@
 #define SLAVE_ADDR 0x8
 #define MESSAGE_SIZE 8
 
-void setup() 
-{
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(11, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(9, INPUT);
-  pinMode(8, INPUT);
-}
-
 // --------------------------------------
 // Global Variables
 // --------------------------------------
 double speed = 55.5; //Velocidad media
 int slope = 0;
+double distance = 0;
+int ligth = 0;
+int lamp = 0;
 int acc = 0;
 int brk = 0;
 int mixer = 0;
@@ -108,8 +101,38 @@ int slope_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("SLP: REQ",request)) ) {
+           if(slope == 0){
+            // send the answer for slope request
+            sprintf(answer,"SLP:FLAT");
+           }
+           else if (slope == 1){
+            sprintf(answer,"SLP:  UP");
+           }
+           else if (slope == -1){
+            sprintf(answer,"SLP:DOWN");
+           }
+      
+
+      // set buffers and flags
+      memset(request,'\0', MESSAGE_SIZE+1);
+      request_received = false;
+      answer_requested = true;
+   }
+   return 0;
+}
+
+// --------------------------------------
+// Function: ligth_req
+// --------------------------------------
+int ligth_req()
+{
+   // while there is enough data for a request
+   if ( (request_received) &&
+        (0 == strcmp("LIT: REQ",request)) ) {
+      char num_str[5];
+      dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
-      sprintf(answer,"SLP:%s",slope);
+      sprintf(answer,"LIT:%s%",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -130,6 +153,7 @@ int acc_req()
            digitalWrite(13, acc);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"GAS:  OK");
         }
 
       else if( (request_received) &&
@@ -138,8 +162,8 @@ int acc_req()
            digitalWrite(13, acc);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"GAS:  OK");
         }
-   sprintf(answer,"GAS:  OK");
    return 0;
 }
 
@@ -154,6 +178,7 @@ int break_req()
            digitalWrite(12, brk);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"BRK:  OK");
         }
 
       else if( (request_received) &&
@@ -162,6 +187,7 @@ int break_req()
            digitalWrite(12, brk);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"BRK:  OK");
         }
    return 0;
 }
@@ -177,6 +203,7 @@ int mixer_req()
            digitalWrite(10, mixer);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"MIX:  OK");
         }
 
       else if( (request_received) &&
@@ -185,6 +212,32 @@ int mixer_req()
            digitalWrite(10, mixer);
            request_received = false;
            answer_requested = true;
+           sprintf(answer,"MIX:  OK");
+        }
+   return 0;
+}
+
+// --------------------------------------
+// Function: lamp_req
+// --------------------------------------
+int lamp_req()
+{
+   if ( (request_received) &&
+        (0 == strcmp("LAM: SET",request)) ) {
+           lamp = 1;
+           digitalWrite(7, lamp);
+           request_received = false;
+           answer_requested = true;
+           sprintf(answer,"LAM:  OK");
+        }
+
+      else if( (request_received) &&
+        (0 == strcmp("LAM: CLR",request)) ){
+           lamp = 0;
+           digitalWrite(7, lamp);
+           request_received = false;
+           answer_requested = true;
+           sprintf(answer,"LAM:  OK");
         }
    return 0;
 }
@@ -196,15 +249,15 @@ int get_slope()
 {
    int value = 0;
    if(digitalRead(9)==1){
-      slope = "DOWN"
+      slope = -1;
    }
 
    if(digitalRead(8)==1){
-      slope = "UP"
+      slope = 1;
    } 
 
    else{
-      slope = "FLAT"
+      slope = 0;
    }
 
    return 0;
@@ -220,15 +273,15 @@ int show_speed()
       //V = Vo + A T; A = 0.5
       a = a + 0.5;
    }
-   if(brk==1){
+   else if(brk==1){
       //V = Vo + A T; A= -0.5
        a = a - 0.5;
    }
-   if(0 == strcmp("UP",slope)){
+   if(slope == -1){
       //V = Vo + A T; A= -0.25
       a = a - 0.25;
    }
-   if(0 == strcmp("DOWN",slope)){
+   else if(slope == 1){
       //V = Vo + A T; A= 0.25
       a = a + 0.25;
    }
@@ -239,6 +292,26 @@ int show_speed()
    digitalWrite(10, ligth_speed);
 
    return 0;
+}
+
+// --------------------------------------
+// Function: get_ligth
+// --------------------------------------
+int get_ligth()
+{
+  int value = 0;
+  value = analogRead(0);
+  ligth = map (value, 0, 1023, 0, 100);
+}
+
+
+// --------------------------------------
+// Function: get_distance
+// --------------------------------------
+int get_distance(){
+   int value = 0;
+   value = analogRead(2);
+   distance = map (value, 0, 1023, 10000, 90000);
 }
 
 // --------------------------------------
@@ -254,6 +327,14 @@ void setup()
   
   // Function to run when data received from master
   Wire.onReceive(receiveEvent);
+
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, INPUT);
+  pinMode(8, INPUT);
+  pinMode(7, OUTPUT);
 }
 
 // --------------------------------------
