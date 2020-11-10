@@ -14,17 +14,21 @@
 // --------------------------------------
 // Global Variables
 // --------------------------------------
+
 double speed = 55.5; //Velocidad media
-int slope = 0;
-int ligth = 0;
-int lamp = 0;
-int acc = 0;
-int brk = 0;
-int mixer = 0;
+int slope = 0; //slope: 0=FLAT, 1=UP, -1=DOWN
+int acc = 0; //gas on/off
+int brk = 0; //break on/off
+int mixer = 0; // Mixer on/off
+int ligth = 0; // Porcentage of ligth
+int lamp = 0; // Lamp on/off
 bool request_received = false; 
 bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
 char answer[MESSAGE_SIZE+1];
+int sc = 0; // secundary cycle
+double t = 0.001; // 1 millisecond
+
 
 // --------------------------------------
 // Handler function: receiveEvent
@@ -330,10 +334,33 @@ void setup()
 // --------------------------------------
 void loop()
 {
-   //para cuando se lo piden, devolverlo
-    speed_req();
-    slope_req();
-   //Chechealr internamente los datos - Pagar luces, leer slope, velociad, etc.
-    show_speed();
-    check_slope();
+   double start = micros();
+   switch (sc)
+   {
+   case 0:
+      //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+      show_speed();
+      check_slope();
+      get_ligth();
+      //para cuando se lo piden, hacer/devolverlo
+      mixer_req();
+      break_req();
+      acc_req();
+      lamp_req();
+      break;
+   
+   case 1:
+      //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+      show_speed();
+      check_slope();
+      get_ligth();
+      //para cuando se lo piden, hacer/devolverlo
+      speed_req();
+      slope_req();
+      ligth_req();
+      break;
+   sc = (sc + 1) % 2;
+   double end = micros();
+   delay((end-start)*1000);
+   }
 }

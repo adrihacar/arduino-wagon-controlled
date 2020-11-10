@@ -3,4 +3,5 @@ gas break lamp ... hacer cosas = 0,000156 segundos
 
 calcular velocidad = 0,000148 segundos
 calcular pendiente = 0,000064 segundos
-calcular luz externa = 
+
+calcular luz externa = 0,000124 segundos
