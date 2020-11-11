@@ -15,17 +15,20 @@
 // Global Variables
 // --------------------------------------
 double speed = 55.5; //Velocidad media
-int slope = 0;
-double distance = 0;
-int ligth = 0;
-int lamp = 0;
-int acc = 0;
-int brk = 0;
-int mixer = 0;
+int slope = 0; //slope: 0=FLAT, 1=UP, -1=DOWN
+int acc = 0; //gas on/off
+int brk = 0; //break on/off
+int mixer = 0; // Mixer on/off
+int ligth = 0; // Porcentage of ligth
+int lamp = 0; // Lamp on/off
+double distance = 0; // Distance [10000,90000]
+int mode = 0; // mode: 0=Distance selector, 1=Approach mode, 2=Stop mode
 bool request_received = false; 
 bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
 char answer[MESSAGE_SIZE+1];
+int sc = 0; // secundary cycle
+double t = 0.001; // 1 millisecond
 
 // --------------------------------------
 // Handler function: receiveEvent
@@ -133,6 +136,28 @@ int ligth_req()
       dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
       sprintf(answer,"LIT:%s%",ligth);
+
+      // set buffers and flags
+      memset(request,'\0', MESSAGE_SIZE+1);
+      request_received = false;
+      answer_requested = true;
+   }
+   return 0;
+}
+
+// --------------------------------------
+// Function: stop_req ->NOT SHCEDULED YET
+// --------------------------------------
+int stop_req()
+{
+   // while there is enough data for a request
+   if ( (request_received) &&
+        (0 == strcmp("STP: REQ",request)) ) {
+      if(mode != 2){
+         sprintf(answer,"STP:  GO",num_str);
+      } else {
+         sprintf(answer,"STP:STOP",num_str);
+      }
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -306,13 +331,26 @@ int get_ligth()
 
 
 // --------------------------------------
-// Function: get_distance
+// Function: get_distance -> NOT SCHEDULED YET
 // --------------------------------------
 int get_distance(){
    int value = 0;
-   value = analogRead(2);
+   value = analogRead(1);
    distance = map (value, 0, 1023, 10000, 90000);
+   return 0;
 }
+
+// --------------------------------------
+// Function: validator_distance -> NOT SCHEDULED YET
+// --------------------------------------
+int validator_distance(){
+
+
+
+   return 0;
+}
+
+
 
 // --------------------------------------
 // Function: setup
@@ -335,6 +373,7 @@ void setup()
   pinMode(9, INPUT);
   pinMode(8, INPUT);
   pinMode(7, OUTPUT);
+  pinMode(6, INPUT);
 }
 
 // --------------------------------------
@@ -349,3 +388,12 @@ void loop()
     show_speed();
     check_slope();
 }
+
+
+/*
+
+TODO: pulsar boton = cambiar a modo 1 o modo 0, dependiendo
+      lo que sabe adri que es muy listo él jejeje
+      hacer los calculos para ver si: distncia <= 0 y veloicdad <= 10 km/h
+
+*/
