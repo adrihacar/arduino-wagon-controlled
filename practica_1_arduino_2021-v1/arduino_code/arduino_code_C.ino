@@ -28,7 +28,9 @@ bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
 char answer[MESSAGE_SIZE+1];
 int sc = 0; // secundary cycle
-double t = 0.001; // 1 millisecond
+double t_speed = 0.001; // 1 millisecond
+double t_distance = 0.001;
+int pushed = 0;
 
 // --------------------------------------
 // Handler function: receiveEvent
@@ -168,6 +170,27 @@ int stop_req()
 }
 
 // --------------------------------------
+// Function: distance_req ->NOT SHCEDULED YET
+// --------------------------------------
+int distance_req()
+{
+   // while there is enough data for a request
+   if ( (request_received) &&
+        (0 == strcmp("DS:  REQ",request)) ) {
+      char num_str[5];
+      dtostrf(distance,5,1,num_str);
+      // send the answer for slope request
+      sprintf(answer,"DS:%s",num_str);
+
+      // set buffers and flags
+      memset(request,'\0', MESSAGE_SIZE+1);
+      request_received = false;
+      answer_requested = true;
+   }
+   return 0;
+}
+
+// --------------------------------------
 // Function: acc_req
 // --------------------------------------
 int acc_req()
@@ -293,26 +316,29 @@ int get_slope()
 // --------------------------------------
 int show_speed()
 {
-   double a = 0;
-   if(acc==1){
-      //V = Vo + A T; A = 0.5
-      a = a + 0.5;
-   }
-   else if(brk==1){
-      //V = Vo + A T; A= -0.5
-       a = a - 0.5;
-   }
-   if(slope == -1){
-      //V = Vo + A T; A= -0.25
-      a = a - 0.25;
-   }
-   else if(slope == 1){
-      //V = Vo + A T; A= 0.25
-      a = a + 0.25;
-   }
+   if(mode != 2){
+      double a = 0;
+      if(acc==1){
+         //V = Vo + A T; A = 0.5
+         a = a + 0.5;
+      }
+      else if(brk==1){
+         //V = Vo + A T; A= -0.5
+         a = a - 0.5;
+      }
+      if(slope == -1){
+         //V = Vo + A T; A= -0.25
+         a = a - 0.25;
+      }
+      else if(slope == 1){
+         //V = Vo + A T; A= 0.25
+         a = a + 0.25;
+      }
+      speed = speed + a*t_speed;
 
-   speed = speed + a*t;
-
+   } else {
+      speed = 0.0;
+   }
    int ligth_speed = map (speed, 0, 70, 0, 255);
    digitalWrite(10, ligth_speed);
 
@@ -345,11 +371,62 @@ int get_distance(){
 // --------------------------------------
 int validator_distance(){
 
-
+  int value = 0;
+  value = digitalRead(6); 
+  if(value == 1 && button_old == 0) {
+    pushed  = 1;
+  }
+  if(pushed = 1 && value == 0){
+     pushed = 0;
+     if(mode == 0){
+       mode = 1;
+     } else if (mode == 2){
+       mode = 0;
+     }
+  }
 
    return 0;
 }
 
+// --------------------------------------
+// Function: Calculator_distance -> NOT SCHEDULED YET
+// --------------------------------------
+int Calculator_distance(){
+
+   if(mode != 2){
+      double a = 0;
+      if(acc==1){
+         //V = Vo + A T; A = 0.5
+         a = a + 0.5;
+      }
+      else if(brk==1){
+         //V = Vo + A T; A= -0.5
+         a = a - 0.5;
+      }
+      if(slope == -1){
+         //V = Vo + A T; A= -0.25
+         a = a - 0.25;
+      }
+      else if(slope == 1){
+         //V = Vo + A T; A= 0.25
+         a = a + 0.25;
+      }
+
+      distance = distance - (speed*t_distance + (1/2)*a*t_distance*t_distance);
+   } else {
+      distance = 0;
+   }
+   return 0;
+}
+
+// --------------------------------------
+// Function: Check_change_mode -> NOT SCHEDULED YET
+// --------------------------------------
+int Check_change_mode(){
+   if(speed <= 10 && distance <= 0){
+      mode = 2;
+   }
+}
 
 
 // --------------------------------------
@@ -381,19 +458,104 @@ void setup()
 // --------------------------------------
 void loop()
 {
-   //para cuando se lo piden, devolverlo
-    speed_req();
-    slope_req();
-   //Chechealr internamente los datos - Pagar luces, leer slope, velociad, etc.
-    show_speed();
-    check_slope();
+   if(mode = 0){
+      double start = micros();
+      switch (sc)
+      {
+      case 0:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         mixer_req();
+         break_req();
+         acc_req();
+         lamp_req();
+         break;
+      
+      case 1:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         speed_req();
+         slope_req();
+         ligth_req();
+         break;
+      sc = (sc + 1) % 2;
+      double end = micros();
+      delay((end-start)*1000);
+      }
+
+   } else if(mode = 1){
+      double start = micros();
+      switch (sc)
+      {
+      case 0:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         mixer_req();
+         break_req();
+         acc_req();
+         lamp_req();
+         break;
+      
+      case 1:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         speed_req();
+         slope_req();
+         ligth_req();
+         break;
+      sc = (sc + 1) % 2;
+      double end = micros();
+      delay((end-start)*1000);
+      }
+
+   } else if(mode = 2){
+      double start = micros();
+      switch (sc)
+      {
+      case 0:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         mixer_req();
+         break_req();
+         acc_req();
+         lamp_req();
+         break;
+      
+      case 1:
+         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
+         show_speed();
+         check_slope();
+         get_ligth();
+         //para cuando se lo piden, hacer/devolverlo
+         speed_req();
+         slope_req();
+         ligth_req();
+         break;
+      sc = (sc + 1) % 2;
+      double end = micros();
+      delay((end-start)*1000);
+      }
+   }
 }
 
 
 /*
 
-TODO: pulsar boton = cambiar a modo 1 o modo 0, dependiendo
-      lo que sabe adri que es muy listo él jejeje
-      hacer los calculos para ver si: distncia <= 0 y veloicdad <= 10 km/h
+TODO: lo que sabe adri que es muy listo él jejeje
 
 */
