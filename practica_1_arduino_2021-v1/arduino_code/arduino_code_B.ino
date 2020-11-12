@@ -27,7 +27,7 @@ bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
 char answer[MESSAGE_SIZE+1];
 int sc = 0; // secundary cycle
-double t = 0.001; // 1 millisecond
+double t = 0.1; // 1 millisecond
 
 
 // --------------------------------------
@@ -334,7 +334,7 @@ void setup()
 // --------------------------------------
 void loop()
 {
-   double start = micros();
+   double start = millis();
    switch (sc)
    {
    case 0:
@@ -360,7 +360,7 @@ void loop()
       ligth_req();
       break;
    sc = (sc + 1) % 2;
-   double end = micros();
-   delay((end-start)*1000);
+   double end = millis();
+   delay(end-start);
    }
 }

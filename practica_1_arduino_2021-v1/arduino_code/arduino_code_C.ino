@@ -463,28 +463,26 @@ void loop()
       switch (sc)
       {
       case 0:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         mixer_req();
-         break_req();
-         acc_req();
-         lamp_req();
+         
          break;
       
       case 1:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         speed_req();
-         slope_req();
-         ligth_req();
+        
          break;
-      sc = (sc + 1) % 2;
+
+      case 2:
+        
+         break;
+
+      case 3:
+        
+         break;
+
+      case 4:
+        
+         break;
+
+      sc = (sc + 1) % 5;
       double end = micros();
       delay((end-start)*1000);
       }
@@ -494,28 +492,26 @@ void loop()
       switch (sc)
       {
       case 0:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         mixer_req();
-         break_req();
-         acc_req();
-         lamp_req();
+         
          break;
       
       case 1:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         speed_req();
-         slope_req();
-         ligth_req();
+        
          break;
-      sc = (sc + 1) % 2;
+
+      case 2:
+        
+         break;
+
+      case 3:
+        
+         break;
+
+      case 4:
+        
+         break;
+
+      sc = (sc + 1) % 5;
       double end = micros();
       delay((end-start)*1000);
       }
@@ -525,28 +521,26 @@ void loop()
       switch (sc)
       {
       case 0:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         mixer_req();
-         break_req();
-         acc_req();
-         lamp_req();
+         
          break;
       
       case 1:
-         //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
-         show_speed();
-         check_slope();
-         get_ligth();
-         //para cuando se lo piden, hacer/devolverlo
-         speed_req();
-         slope_req();
-         ligth_req();
+        
          break;
-      sc = (sc + 1) % 2;
+
+      case 2:
+        
+         break;
+
+      case 3:
+        
+         break;
+
+      case 4:
+        
+         break;
+
+      sc = (sc + 1) % 5;
       double end = micros();
       delay((end-start)*1000);
       }
