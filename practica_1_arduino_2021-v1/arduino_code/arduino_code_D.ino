@@ -628,10 +628,3 @@ void loop()
       }
    }
 }
-
-
-/*
-
-TODO: lo que sabe adri que es muy listo él jejeje
-
-*/
