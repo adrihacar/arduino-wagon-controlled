@@ -255,7 +255,7 @@ int get_slope()
       slope = -1;
    }
 
-   if(digitalRead(8)==1){
+   else if(digitalRead(8)==1){
       slope = 1;
    } 
 

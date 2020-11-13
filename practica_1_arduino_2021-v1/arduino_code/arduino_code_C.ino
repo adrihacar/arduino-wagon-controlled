@@ -300,7 +300,7 @@ int get_slope()
       slope = -1;
    }
 
-   if(digitalRead(8)==1){
+   else if(digitalRead(8)==1){
       slope = 1;
    } 
 
@@ -309,6 +309,13 @@ int get_slope()
    }
 
    return 0;
+}
+
+// --------------------------------------
+// Function: show_distance --> NOT SCHEDULED
+// --------------------------------------
+int show_distance(){
+
 }
 
 // --------------------------------------
