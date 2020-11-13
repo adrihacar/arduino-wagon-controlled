@@ -21,15 +21,15 @@ int brk = 0; //break on/off
 int mixer = 0; // Mixer on/off
 int ligth = 0; // Porcentage of ligth
 int lamp = 0; // Lamp on/off
-double distance = 0; // Distance [10000,90000]
+int distance = 0; // Distance [10000,90000]
 int mode = 0; // mode: 0=Distance selector, 1=Approach mode, 2=Stop mode
 bool request_received = false; 
 bool answer_requested = false;
 char request[MESSAGE_SIZE+1];
 char answer[MESSAGE_SIZE+1];
 int sc = 0; // secundary cycle
-double t_speed = 0.001; // 1 millisecond
-double t_distance = 0.001;
+double t_speed = 0.1; // 1 millisecond
+double t_distance = 0.1;
 int pushed = 0;
 
 // --------------------------------------
