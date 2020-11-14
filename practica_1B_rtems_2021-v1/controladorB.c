@@ -30,45 +30,16 @@
 float speed = 0.0;
 struct timespec time_msg = {0,400000000};
 int fd_i2c = -1;
+
+/*PART 1*/
+int mix = 0;
+int gas = 0;
+int brk = 0;
+
+/*PART 2*/
 int ligth = 0; //% ligth
 int is_dark = 0; // 0 --> no dark,  1--> dark
 
-
-/**********************************************************
- *  Function: task_speed
- *********************************************************/
-int task_speed()
-{
-    char request[10];
-    char answer[10];
-    
-    //--------------------------------
-    //  request speed and display it
-    //--------------------------------
-    
-    //clear request and answer
-    memset(request, '\0', 10);
-    memset(answer, '\0', 10);
-    
-    // request speed
-    strcpy(request, "SPD: REQ\n");
-    
-#ifdef RASPBERRYPI
-    // use Raspberry Pi I2C serial module
-    write(fd_i2c, request, MSG_LEN);
-    nanosleep(&time_msg, NULL);
-    read(fd_i2c, answer, MSG_LEN);
-#else
-    //Use the simulator
-    simulator(request, answer);
-#endif
-    
-    // display speed
-    if (1 == sscanf (answer, "SPD:%f\n", &speed)){
-        displaySpeed(speed);
-    }
-    return 0;
-}
 
 /**********************************************************
  *  Function: task_ligth
@@ -145,42 +116,202 @@ int task_lamp()
     return 0;
 }
 
+/**********************************************************
+ *  Function: task_mix
+ *********************************************************/
+int task_mix()
+{
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request gas
+	if (mix == 0){
+		strcpy(request, "MIX: SET\n");
+		mix = 1;
+	}else{
+		strcpy(request, "MIX: CLR\n");
+		mix = 0;
+	}
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+		displayMix(mix);
+	//}
+	return 0;
+}
+
+/**********************************************************
+ *  Function: task_gas
+ *********************************************************/
+int task_gas()
+{
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request gas
+	if (speed < 50){
+		strcpy(request, "GAS: SET\n");
+		gas = 1;
+	}else{
+		strcpy(request, "GAS: CLR\n");
+		gas = 0;
+	}
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+		displayGas(gas);
+	//}
+	return 0;
+}
+
+/**********************************************************
+ *  Function: task_brk
+ *********************************************************/
+int task_brk()
+{
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request gas
+	if (60 < speed){
+		strcpy(request, "BRK: SET\n");
+	}else{
+		strcpy(request, "BRK: CLR\n");
+	}
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+		displayBrake(brk);
+	//}
+	return 0;
+}
+
+
+/**********************************************************
+ *  Function: task_speed
+ *********************************************************/
+int task_speed()
+{
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request speed
+	strcpy(request, "SPD: REQ\n");
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+		displaySpeed(speed);
+	}
+	return 0;
+}
 
 //-------------------------------------
 //-  Function: task_slope
 //-------------------------------------
 int task_slope()
 {
-    char request[10];
-    char answer[10];
-    
-    //--------------------------------
-    //  request slope and display it
-    //--------------------------------
-    
-    //clear request and answer
-    memset(request,'\0',10);
-    memset(answer,'\0',10);
-    
-    // request slope
-    strcpy(request, "SLP: REQ\n");
-    
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request slope and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request,'\0',10);
+	memset(answer,'\0',10);
+
+	// request slope
+	strcpy(request, "SLP: REQ\n");
+
 #ifdef RASPBERRYPI
-    // use Raspberry Pi I2C serial module
-    write(fd_i2c, request, MSG_LEN);
-    nanosleep(&time_msg, NULL);
-    read(fd_i2c, answer, MSG_LEN);
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
 #else
-    //Use the simulator
-    simulator(request, answer);
+	//Use the simulator
+	simulator(request, answer);
 #endif
-    
-    // display slope
-    if (0 == strcmp(answer, "SLP:DOWN\n")) displaySlope(-1);
-    if (0 == strcmp(answer, "SLP:FLAT\n")) displaySlope(0);
-    if (0 == strcmp(answer, "SLP:  UP\n")) displaySlope(1);
-    
-    return 0;
+
+	// display slope
+	if (0 == strcmp(answer, "SLP:DOWN\n")) displaySlope(-1);
+	if (0 == strcmp(answer, "SLP:FLAT\n")) displaySlope(0);
+	if (0 == strcmp(answer, "SLP:  UP\n")) displaySlope(1);
+
+	return 0;
 }
 
 
@@ -191,13 +322,50 @@ int task_slope()
 //-------------------------------------
 void *controller(void *arg)
 {
-    // Endless loop
+	int secondary_cycle = 0;
+	long elapsed_time = 0;
+	struct timespec start, end;
+    // Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
     while(1) {
-        // calling task of speed
-        task_speed();
-        
-        // calling task of slope
-        task_slope();
+    	clock_gettime(CLOCK_REALTIME, &start);
+    	switch(secondary_cycle){
+
+    		case 0:
+    			task_mix();
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 1:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 2:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 3:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    		case 4:
+    			task_speed();
+    			task_slope();
+    			task_gas();
+    			task_brk();
+    			break;
+    	}
+    	secondary_cycle = (secondary_cycle + 1) % 5;
+    	clock_gettime(CLOCK_REALTIME, &end);
+    	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+    	sleep(9 - elapsed_time);
     }
 }
 
