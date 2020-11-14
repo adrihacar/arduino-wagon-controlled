@@ -21,7 +21,7 @@ int brk = 0; //break on/off
 int mixer = 0; // Mixer on/off
 int ligth = 0; // Porcentage of ligth
 int lamp = 0; // Lamp on/off
-int distance = 0; // Distance [10000,90000]
+long distance = 0; // Distance [10000,90000]
 int mode = 0; // mode: 0=Distance selector, 1=Approach mode, 2=Stop mode, 3=emergency mode
 bool request_received = false; 
 bool answer_requested = false;
@@ -99,9 +99,9 @@ int speed_req()
 }
 
 // --------------------------------------
-// Function: speed_req -> NOT SCHEDULED
+// Function: emergency_req -> NOT SCHEDULED
 // --------------------------------------
-int speed_req()
+int emergency_req()
 {
    // while there is enough data for a request
    if ( (request_received) &&
@@ -513,118 +513,188 @@ void setup()
 void loop()
 {
    if(mode = 0){
-      double start = micros();
+      double start = millis();
       switch (sc)
       {
       case 0:
-         
+         validator_distance();
+         get_distance();
+         show_speed();
+         check_slope();
+         get_ligth();
+         speed_req();
+         slope_req();
          break;
       
       case 1:
-        
+         validator_distance();
+         get_distance();
+         show_speed();
+         check_slope();
+         get_ligth();
+         ligth_req();
+         stop_req();
          break;
 
       case 2:
-        
+         validator_distance();
+         get_distance();
+         show_speed();
+         check_slope();
+         get_ligth();
+         emergency_req();
          break;
 
       case 3:
-        
+         validator_distance();
+         get_distance(); 
+         show_speed();
+         check_slope();
+         get_ligth();
+         acc_req();
+         break_req();
+         mixer_req();
          break;
 
       case 4:
-        
+         validator_distance();
+         get_distance();
+         show_speed();
+         check_slope();
+         get_ligth();
+         lamp_req();
+         show_distance();
          break;
 
       sc = (sc + 1) % 5;
-      double end = micros();
-      delay((end-start)*1000);
+      double end = millis();
+      delay(end-start);
       }
 
    } else if(mode = 1){
-      double start = micros();
+      double start = millis();
       switch (sc)
       {
       case 0:
-         
+         get_ligth();
+         show_speed();
+         get_slope();
+         Calculator_distance();
+         Check_change_mode();
+         speed_req();
+         slope_req();
          break;
       
       case 1:
-        
+         get_ligth();
+         show_speed();
+         get_slope();
+         Calculator_distance();
+         Check_change_mode();
+         ligth_req();
+         stop_req();
          break;
 
       case 2:
-        
+         get_ligth();
+         show_speed();
+         get_slope();
+         Calculator_distance();
+         Check_change_mode();
+         distance_req();
+         mixer_req();
          break;
 
       case 3:
-        
+         get_ligth();
+         show_speed();
+         get_slope();
+         Calculator_distance();
+         Check_change_mode();
+         acc_req();
+         break_req();
+         lamp_req();
          break;
 
       case 4:
-        
+         get_ligth();
+         show_speed();
+         get_slope();
+         Calculator_distance();
+         Check_change_mode();
+         show_distance();
+         emergency_req();
          break;
 
       sc = (sc + 1) % 5;
-      double end = micros();
-      delay((end-start)*1000);
+      double end = millis();
+      delay(end-start);
       }
 
    } else if(mode = 2){
-      double start = micros();
+      double start = millis();
       switch (sc)
       {
       case 0:
-         
+         validator_distance();
+         get_slope();
+         show_speed();
+         get_ligth();
+         mixer_req();
+         speed_req();
+         slope_req();
          break;
       
       case 1:
-        
+         validator_distance();
+         get_slope();
+         show_speed();
+         get_ligth();
+         acc_req();
+         break_req();
          break;
 
       case 2:
-        
+         validator_distance();
+         get_slope();
+         show_speed();
+         get_ligth();
+         lamp_req();
          break;
 
       case 3:
-        
+         validator_distance();
+         get_slope();
+         show_speed();
+         get_ligth();
+         stop_req();
          break;
 
       case 4:
-        
+         validator_distance();
+         get_slope();
+         show_speed();
+         get_ligth();
+         ligth_req();
+         emergency_req();
          break;
 
       sc = (sc + 1) % 5;
-      double end = micros();
-      delay((end-start)*1000);
+      double end = millis();
+      delay(end-start);
       }
    } else if(mode = 3){
-      double start = micros();
-      switch (sc)
-      {
-      case 0:
-         
-         break;
+      double start = millis();
       
-      case 1:
-        
-         break;
-
-      case 2:
-        
-         break;
-
-      case 3:
-        
-         break;
-
-      case 4:
-        
-         break;
+      Turn_off_acc();
+      Turn_on_brk();
+      Turn_on_lamp();
+      mixer_req();
+      get_slope();
+      show_speed();
 
       sc = (sc + 1) % 5;
-      double end = micros();
-      delay((end-start)*1000);
+      double end = millis();
+      delay(end-start);
       }
-   }
 }
