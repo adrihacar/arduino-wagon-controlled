@@ -353,11 +353,11 @@ int show_speed()
       }
       if(slope == -1){
          //V = Vo + A T; A= -0.25
-         a = a - 0.25;
+         a = a + 0.25;
       }
       else if(slope == 1){
          //V = Vo + A T; A= 0.25
-         a = a + 0.25;
+         a = a - 0.25;
       }
       speed = speed + a*t_speed;
 
@@ -430,11 +430,11 @@ int Calculator_distance(){
       }
       if(slope == -1){
          //V = Vo + A T; A= -0.25
-         a = a - 0.25;
+         a = a + 0.25;
       }
       else if(slope == 1){
          //V = Vo + A T; A= 0.25
-         a = a + 0.25;
+         a = a - 0.25;
       }
 
       distance = distance - (speed*t_distance + (1/2)*a*t_distance*t_distance);
