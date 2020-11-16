@@ -361,6 +361,6 @@ void loop()
       break;
    sc = (sc + 1) % 2;
    double end = millis();
-   delay(end-start);
+   delay(0.1-(end-start));
    }
 }

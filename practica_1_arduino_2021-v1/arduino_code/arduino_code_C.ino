@@ -543,8 +543,7 @@ void loop()
 
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(end-start);
-      }
+      delay(0.1-(end-start));      }
 
    } else if(mode = 1){
       double start = millis();
@@ -602,8 +601,7 @@ void loop()
 
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(end-start);
-      }
+      delay(0.1-(end-start));      }
 
    } else if(mode = 2){
       double start = millis();
@@ -654,7 +652,7 @@ void loop()
 
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(end-start);
+      delay(0.1-(end-start));
       }
    }
 }
