@@ -40,6 +40,19 @@ int displayBrake(int brake);
  *********************************************************/
 int displayMix(int mixer);
 
+/**********************************************************
+ *  Function: displayLightSensor
+ *	Parameters: isDark = 1 -> Dark; 0 -> Bright
+ *********************************************************/
+int displayLightSensor(int isDark);
+
+/**********************************************************
+ *  Function: displayLamps
+ *	Parameters: light = 1 -> ON; 0 -> OFF
+ *********************************************************/
+int displayLamps(int light);
+
+
 
 
 /**********************************************************
@@ -50,4 +63,5 @@ int displayMix(int mixer);
 int simulator(char request[10], char answer[10]);
 
 #endif /* _DISPLAY_H_ */
+
 
