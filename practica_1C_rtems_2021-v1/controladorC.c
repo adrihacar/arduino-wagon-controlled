@@ -17,7 +17,7 @@
 #endif
 
 
-#include "displayB.h"
+#include "displayC.h"
 
 #define BILLION  1E9
 /**********************************************************
@@ -41,6 +41,11 @@ int brk = 0;
 /*PART 2*/
 int ligth = 0; //% ligth
 int is_dark = 0; // 0 --> no dark,  1--> dark
+
+/*PART 3*/
+int mode= 0; //0->NORMAL, 1-->BRAKING MODE, 2 --> STOPPED MODE
+int distance = 2000;
+int distance_limit = 11000; //distance limit
 
 
 /**********************************************************
@@ -318,67 +323,293 @@ int task_slope()
 }
 
 
-
-
-//-------------------------------------
-//-  Function: controller
-//-------------------------------------
-void *controller(void *arg)
+//read the distance and changes the mode accordinly
+int task_check_distance()
 {
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request distance
+	strcpy(request, "DS  REQ\n");
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display distance
+	if (1 == sscanf (answer, "DS:%i\n", &distance)){
+		if(distance == 0){
+			mode=2;
+		}
+		else if(distance < distance_limit){
+			mode =1;  //CHANGE MODE
+		}
+		displayDistance(distance);
+	}
+	return 0;
+
+
+}
+
+//read if moving and change state to stop.
+int task_check_moving(){
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request distance
+	strcpy(request, "STP REQ\n");
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display distance
+	if (0 == strcmp(answer, "STP:  GO\n")){
+		mode = 0;
+		displayStop(0);
+	}
+	if (0 == strcmp(answer, "SLP:STOP\n")){
+		displayStop(1);
+	}
+	return 0;
+
+}
+
+int task_on_lamps(){
+    char request[10];
+    char answer[10];
+
+    //--------------------------------
+    //  request slope and display it
+    //--------------------------------
+
+    //clear request and answer
+    memset(request,'\0',10);
+    memset(answer,'\0',10);
+
+
+    strcpy(request, "LAM: SET\n");
+#ifdef RASPBERRYPI
+    // use Raspberry Pi I2C serial module
+    write(fd_i2c, request, MSG_LEN);
+    nanosleep(&time_msg, NULL);
+    read(fd_i2c, answer, MSG_LEN);
+#else
+    //Use the simulator
+    simulator(request, answer);
+#endif
+    displayLamps(is_dark);
+    return 0;
+}
+
+//break mode
+int task_brk_mode_break(){
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	//avoid go less than 5 m/s
+	if (8 < speed){
+		strcpy(request, "BRK: SET\n");
+	}else{
+		strcpy(request, "BRK: CLR\n");
+	}
+
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+	displayBrake(brk);
+	//}
+	return 0;
+}
+
+int task_gas_mode_break()
+{
+	char request[10];
+	char answer[10];
+
+	//--------------------------------
+	//  request speed and display it
+	//--------------------------------
+
+	//clear request and answer
+	memset(request, '\0', 10);
+	memset(answer, '\0', 10);
+
+	// request gas
+	if (speed < 5){
+		strcpy(request, "GAS: SET\n");
+		gas = 1;
+	}else{
+		strcpy(request, "GAS: CLR\n");
+		gas = 0;
+	}
+
+#ifdef RASPBERRYPI
+	// use Raspberry Pi I2C serial module
+	write(fd_i2c, request, MSG_LEN);
+	nanosleep(&time_msg, NULL);
+	read(fd_i2c, answer, MSG_LEN);
+#else
+	//Use the simulator
+	simulator(request, answer);
+#endif
+
+	// display speed
+	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
+		displayGas(gas);
+	//}
+	return 0;
+}
+
+
+void normal_mode(){
 	int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-    // Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
-    while(1) {
-    	clock_gettime(CLOCK_REALTIME, &start);
-    	switch(secondary_cycle){
+	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	clock_gettime(CLOCK_REALTIME, &start);
+	switch(secondary_cycle){
+		case 0:
+			task_mix();
+			task_speed();
+			task_slope();
+			task_gas();
+			task_brk();
+			task_ligth();
+			task_lamp();
+			task_check_distance();
+			break;
+		case 1:
+			task_speed();
+			task_slope();
+			task_gas();
+			task_brk();
+			task_ligth();
+			task_lamp();
+			task_check_distance();
+			break;
+		case 2:
+			task_speed();
+			task_slope();
+			task_gas();
+			task_brk();
+			task_ligth();
+			task_lamp();
+			task_check_distance();
+			break;
+		case 3:
+			task_speed();
+			task_slope();
+			task_gas();
+			task_brk();
+			task_ligth();
+			task_lamp();
+			task_check_distance();
+			break;
+		case 4:
+			task_speed();
+			task_slope();
+			task_gas();
+			task_brk();
+			task_ligth();
+			task_lamp();
+			task_check_distance();
+			break;
+	}
+	secondary_cycle = (secondary_cycle + 1) % 5;
+	clock_gettime(CLOCK_REALTIME, &end);
+	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+	sleep(9 - elapsed_time);
+}
 
+void break_mode(){
+	task_slope();
+	task_speed();
+	task_check_distance();
+	task_gas();
+	task_brk();
+	task_mix();
+	task_on_lamps();
+}
+
+
+void stop_mode(){
+	task_check_moving();
+	task_mix();
+	task_on_lamps();
+
+}
+
+void emergency_mode(){
+
+}
+
+//-------------------------------------
+//-  Function: controller
+//------------------------------------
+void *controller(void *arg)
+{
+
+    while(1) {
+    	switch(mode){
     		case 0:
-    			task_mix();
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			task_ligth();
-    			task_lamp();
+    			normal_mode();
     			break;
     		case 1:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			task_ligth();
-    			task_lamp();
+    			break_mode();
     			break;
     		case 2:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			task_ligth();
-    			task_lamp();
+    			stop_mode();
     			break;
     		case 3:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			task_ligth();
-    			task_lamp();
-    			break;
-    		case 4:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			task_ligth();
-    			task_lamp();
-    			break;
+    			emergency_mode();
     	}
-    	secondary_cycle = (secondary_cycle + 1) % 5;
-    	clock_gettime(CLOCK_REALTIME, &end);
-    	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-    	sleep(9 - elapsed_time);
+
     }
 }
 

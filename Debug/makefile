@@ -9,6 +9,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include practica_1_arduino_2021-v1/extras/rtems_msg_router/subdir.mk
+-include practica_1C_rtems_2021-v1/subdir.mk
 -include practica_1B_rtems_2021-v1/subdir.mk
 -include practica_1A_rtems_2021-v1/subdir.mk
 -include subdir.mk
