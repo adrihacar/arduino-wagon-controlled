@@ -44,7 +44,7 @@ int is_dark = 0; // 0 --> no dark,  1--> dark
 
 /*PART 3*/
 int mode= 0; //0->NORMAL, 1-->BRAKING MODE, 2 --> STOPPED MODE
-int distance = 2000;
+int distance = -1000;
 int distance_limit = 11000; //distance limit
 #define NORMAL_MODE 0
 #define BRAKE_MODE 1
@@ -399,7 +399,7 @@ int task_check_moving(){
 		mode = NORMAL_MODE;
 		displayStop(0);
 	}
-	if (0 == strcmp(answer, "SLP:STOP\n")){
+	if (0 == strcmp(answer, "STP:STOP\n")){
 		displayStop(1);
 	}
 	return 0;
