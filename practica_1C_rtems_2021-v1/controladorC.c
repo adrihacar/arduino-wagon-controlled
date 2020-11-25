@@ -434,7 +434,7 @@ int task_on_lamps(){
 }
 
 //break mode
-int task_brk_mode_break(){
+int task_brk_mode_brake(){
 	char request[10];
 	char answer[10];
 
@@ -470,7 +470,7 @@ int task_brk_mode_break(){
 	return 0;
 }
 
-int task_gas_mode_break()
+int task_gas_mode_brake()
 {
 	char request[10];
 	char answer[10];
@@ -558,16 +558,16 @@ void brake_mode(){
 				task_slope();
 				task_speed();
 				task_check_distance();
-				task_gas_mode_break();
-				task_brk_mode_break();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
 				task_on_lamps();
 				break;
 			case 1:
 				task_slope();
 				task_speed();
 				task_check_distance();
-				task_gas_mode_break();
-				task_brk_mode_break();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
 				task_on_lamps();
 				break;
 		}
