@@ -447,8 +447,10 @@ int task_brk_mode_brake(){
 
 	//avoid go less than 5 m/s
 	if (8 < speed){
+		brk=1;
 		strcpy(request, "BRK: SET\n");
 	}else{
+		brk=0;
 		strcpy(request, "BRK: CLR\n");
 	}
 
