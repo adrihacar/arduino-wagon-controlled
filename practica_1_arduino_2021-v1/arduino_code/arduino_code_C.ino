@@ -113,7 +113,10 @@ int slope_req()
 {
    // while there is enough data for a request
    if ( (request_received) &&
-        (0 == strcmp("SLP: REQ",request)) ) {
+        (0 == st1; // 1 millisecond
+double t_distance = 0.1;
+int pushed = 0;
+rcmp("SLP: REQ",request)) ) {
            if(slope == 0){
             // send the answer for slope request
             sprintf(answer,"SLP:FLAT");
@@ -145,7 +148,7 @@ int ligth_req()
       char num_str[5];
       dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
-      sprintf(answer,"LIT:%s%",ligth);
+      sprintf(answer,"LIT:%s%%",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -364,9 +367,14 @@ int show_speed()
    } else {
       speed = 0.0;
    }
-   int ligth_speed = map (speed, 0, 70, 0, 255);
-   digitalWrite(10, ligth_speed);
-
+   if(speed < 40 ){
+      digitalWrite(10, 0);
+   } else if (speed > 70){
+      digitalWrite(10, 1);
+   } else {
+      int ligth_speed = map (speed, 40, 70, 0, 255);
+      analogWrite(10, ligth_speed);
+   }
    return 0;
 }
 

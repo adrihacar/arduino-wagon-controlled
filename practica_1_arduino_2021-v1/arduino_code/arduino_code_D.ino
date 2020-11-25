@@ -33,6 +33,14 @@ double t_distance = 0.1;
 int pushed = 0;
 
 // --------------------------------------
+// binary coded decimal (BCD) least significant bit (LSB) for 74LS47 A input pin
+// --------------------------------------
+const byte bcdA   = 2; 
+const byte bcdB   = 3;
+const byte bcdC   = 4;
+const byte bcdD   = 5;
+
+// --------------------------------------
 // Handler function: receiveEvent
 // --------------------------------------
 void receiveEvent(int num)
@@ -155,7 +163,7 @@ int ligth_req()
       char num_str[5];
       dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
-      sprintf(answer,"LIT:%s%",ligth);
+      sprintf(answer,"LIT:%s%%",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -357,8 +365,17 @@ int show_speed()
    } else {
       speed = 0.0;
    }
-   int ligth_speed = map (speed, 0, 70, 0, 255);
-   digitalWrite(10, ligth_speed);
+   if(speed < 0){
+      speed = 0.0;
+   }
+   if(speed < 40 ){
+      digitalWrite(10, 0);
+   } else if (speed > 70){
+      digitalWrite(10, 1);
+   } else {
+      int ligth_speed = map (speed, 40, 70, 0, 255);
+      analogWrite(10, ligth_speed);
+   }
 
    return 0;
 }
@@ -382,6 +399,23 @@ int get_distance(){
    value = analogRead(1);
    distance = map (value, 0, 1023, 10000, 90000);
    return 0;
+}
+
+// --------------------------------------
+// Function: show_distance --> NOT SCHEDULED
+// --------------------------------------
+int show_distance(){
+
+  long value = distance;
+  while (value >= 10){
+    value = value / 10; 
+  }
+
+  digitalWrite(bcdA, bitRead(value, 0));  // BCD LSB
+  digitalWrite(bcdB, bitRead(value, 1));
+  digitalWrite(bcdC, bitRead(value, 2));
+  digitalWrite(bcdD, bitRead(value, 3));  // BCD MSB  
+
 }
 
 // --------------------------------------
@@ -505,6 +539,10 @@ void setup()
   pinMode(8, INPUT);
   pinMode(7, OUTPUT);
   pinMode(6, INPUT);
+  pinMode(bcdA, OUTPUT);
+  pinMode(bcdB, OUTPUT);
+  pinMode(bcdC, OUTPUT);
+  pinMode(bcdD, OUTPUT);
 }
 
 // --------------------------------------
@@ -691,5 +729,6 @@ void loop()
       show_speed();
       
       double end = millis();
-      delay(0.1-(end-start));      }
+      delay(0.1-(end-start));      
+      }
 }
