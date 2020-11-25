@@ -222,7 +222,8 @@ int distance_req()
 int acc_req()
 {
       if ( (request_received) &&
-        (0 == strcmp("GAS: SET",request)) ) {
+        (0 == strcmp("GAS: SET",request)) &&
+        (mode != 3)) {
            acc = 1;
            digitalWrite(13, acc);
            request_received = false;
@@ -247,7 +248,8 @@ int acc_req()
 int break_req()
 {
       if ( (request_received) &&
-        (0 == strcmp("BRK: SET",request)) ) {
+        (0 == strcmp("BRK: SET",request)) &&
+        (mode != 3)) {
            brk = 1;
            digitalWrite(12, brk);
            request_received = false;
@@ -297,7 +299,8 @@ int mixer_req()
 int lamp_req()
 {
    if ( (request_received) &&
-        (0 == strcmp("LAM: SET",request)) ) {
+        (0 == strcmp("LAM: SET",request)) &&
+        (mode != 3)) {
            lamp = 1;
            digitalWrite(7, lamp);
            request_received = false;
@@ -481,43 +484,6 @@ int Check_change_mode(){
 }
 
 // --------------------------------------
-// FUNCIONES DEL MODO DE EMERGENICA
-// --------------------------------------
-
-// --------------------------------------
-// Function: Turn_off_acc
-// --------------------------------------
-int Turn_off_acc(){
-
-    acc = 0;
-    digitalWrite(13, acc);
-
-    return 0;
-}
-
-// --------------------------------------
-// Function: Turn_on_brk
-// --------------------------------------
-int Turn_on_brk(){
-
-    brk = 1;
-    digitalWrite(12, brk);
-    
-    return 0;
-}
-
-// --------------------------------------
-// Function: Turn_on_lamp
-// --------------------------------------
-int Turn_on_lamp(){
-
-    lamp = 0;
-    digitalWrite(7, acc);
-
-    return 0;
-}
-
-// --------------------------------------
 // Function: setup
 // --------------------------------------
 void setup()
@@ -580,6 +546,7 @@ void loop()
          show_speed();
          check_slope();
          get_ligth();
+         distance_req();
          emergency_req();
          break;
 
@@ -721,9 +688,9 @@ void loop()
    } else if(mode = 3){
       double start = millis();
       
-      Turn_off_acc();
-      Turn_on_brk();
-      Turn_on_lamp();
+      acc_req();
+      break_req();
+      lamp_req();
       mixer_req();
       get_slope();
       show_speed();

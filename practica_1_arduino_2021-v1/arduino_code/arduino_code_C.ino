@@ -525,7 +525,7 @@ void loop()
          show_speed();
          check_slope();
          get_ligth();
-
+         distance_req();
          break;
 
       case 3:
