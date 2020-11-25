@@ -811,7 +811,7 @@ void emergency_mode(){
 	long elapsed_time = 0;
 	struct timespec start, end;
 	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
-	while(mode == EMERGENCY_MODE){
+	while(1){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
 			case 0:
