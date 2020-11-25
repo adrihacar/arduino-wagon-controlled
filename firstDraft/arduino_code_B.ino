@@ -253,7 +253,7 @@ int show_speed()
 
    speed = speed + a*t;
 
-   int ligth_speed = map (speed, 0, 70, 0, 255);
+   int ligth_speed = map (speed, 40, 70, 0, 255);
    digitalWrite(10, ligth_speed);
 
    return 0;

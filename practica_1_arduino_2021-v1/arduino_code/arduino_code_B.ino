@@ -135,7 +135,7 @@ int ligth_req()
       char num_str[5];
       dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
-      sprintf(answer,"LIT:%s%",ligth);
+      sprintf(answer,"LIT:%s%%",ligth);
 
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
@@ -290,8 +290,14 @@ int show_speed()
 
    speed = speed + a*t;
 
-   int ligth_speed = map (speed, 0, 70, 0, 255);
-   digitalWrite(10, ligth_speed);
+   if(speed < 40 ){
+      digitalWrite(10, 0);
+   } else if (speed > 70){
+      digitalWrite(10, 1);
+   } else {
+      int ligth_speed = map (speed, 40, 70, 0, 255);
+      analogWrite(10, ligth_speed);
+   }
 
    return 0;
 }
