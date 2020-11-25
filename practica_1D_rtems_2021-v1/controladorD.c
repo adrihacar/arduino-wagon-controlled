@@ -59,6 +59,9 @@ int emergency_sent = 0;
  *********************************************************/
 int task_ligth()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
     char answer[10];
 
@@ -90,6 +93,11 @@ int task_ligth()
     	}
     	displayLightSensor(is_dark);
     }
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
     return 0;
 }
 
@@ -98,6 +106,9 @@ int task_ligth()
  *********************************************************/
 int task_lamp()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
     char answer[10];
 
@@ -125,6 +136,11 @@ int task_lamp()
     simulator(request, answer);
 #endif
     displayLamps(is_dark);
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
     return 0;
 }
 
@@ -133,6 +149,9 @@ int task_lamp()
  *********************************************************/
 int task_mix()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -167,6 +186,11 @@ int task_mix()
 	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 		displayMix(mix);
 	//}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -175,6 +199,9 @@ int task_mix()
  *********************************************************/
 int task_gas()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -209,6 +236,11 @@ int task_gas()
 	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 		displayGas(gas);
 	//}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -217,6 +249,9 @@ int task_gas()
  *********************************************************/
 int task_brk()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -251,6 +286,11 @@ int task_brk()
 	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 		displayBrake(brk);
 	//}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -260,6 +300,9 @@ int task_brk()
  *********************************************************/
 int task_speed()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -288,6 +331,12 @@ int task_speed()
 	if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 		displaySpeed(speed);
 	}
+
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -296,6 +345,9 @@ int task_speed()
 //-------------------------------------
 int task_slope()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -325,6 +377,11 @@ int task_slope()
 	if (0 == strcmp(answer, "SLP:FLAT\n")) displaySlope(0);
 	if (0 == strcmp(answer, "SLP:  UP\n")) displaySlope(1);
 
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -332,6 +389,9 @@ int task_slope()
 //read the distance and changes the mode accordinly
 int task_check_distance()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -366,6 +426,11 @@ int task_check_distance()
 		}
 		displayDistance(distance);
 	}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 
 
@@ -373,6 +438,9 @@ int task_check_distance()
 
 //read if moving and change state to stop.
 int task_check_moving(){
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -405,11 +473,19 @@ int task_check_moving(){
 	if (0 == strcmp(answer, "STP:STOP\n")){
 		displayStop(1);
 	}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 
 }
 
 int task_on_lamps(){
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
     char answer[10];
 
@@ -433,11 +509,19 @@ int task_on_lamps(){
     simulator(request, answer);
 #endif
     displayLamps(is_dark);
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
     return 0;
 }
 
 //break mode
 int task_brk_mode_brake(){
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -472,11 +556,19 @@ int task_brk_mode_brake(){
 	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 	displayBrake(brk);
 	//}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
 int task_gas_mode_brake()
 {
+	long elapsed_time = 0;
+	struct timespec taskstart, taskend;
+	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
 	char answer[10];
 
@@ -511,6 +603,11 @@ int task_gas_mode_brake()
 	//if (1 == sscanf (answer, "SPD:%f\n", &speed)){
 		displayGas(gas);
 	//}
+	clock_gettime(CLOCK_REALTIME, &taskend);
+	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
+	if (0,9 < task_time){
+		mode = EMERGENCY_MODE;
+	}
 	return 0;
 }
 
@@ -761,6 +858,9 @@ void *controller(void *arg)
     			break;
     		case STOPPED_MODE:
     			stopped_mode();
+    			break;
+			case EMERGENCY_MODE:
+    			emergency_mode();
     			break;
     	}
 
