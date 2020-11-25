@@ -46,6 +46,9 @@ int is_dark = 0; // 0 --> no dark,  1--> dark
 int mode= 0; //0->NORMAL, 1-->BRAKING MODE, 2 --> STOPPED MODE
 int distance = 2000;
 int distance_limit = 11000; //distance limit
+#define NORMAL_MODE 0
+#define BRAKING_MODE 1
+#define STOPPED_MODE 2
 
 
 /**********************************************************
@@ -512,76 +515,97 @@ void normal_mode(){
 	long elapsed_time = 0;
 	struct timespec start, end;
 	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
-	clock_gettime(CLOCK_REALTIME, &start);
-	switch(secondary_cycle){
-		case 0:
-			task_mix();
-			task_speed();
-			task_slope();
-			task_gas();
-			task_brk();
-			task_ligth();
-			task_lamp();
-			task_check_distance();
-			break;
-		case 1:
-			task_speed();
-			task_slope();
-			task_gas();
-			task_brk();
-			task_ligth();
-			task_lamp();
-			task_check_distance();
-			break;
-		case 2:
-			task_speed();
-			task_slope();
-			task_gas();
-			task_brk();
-			task_ligth();
-			task_lamp();
-			task_check_distance();
-			break;
-		case 3:
-			task_speed();
-			task_slope();
-			task_gas();
-			task_brk();
-			task_ligth();
-			task_lamp();
-			task_check_distance();
-			break;
-		case 4:
-			task_speed();
-			task_slope();
-			task_gas();
-			task_brk();
-			task_ligth();
-			task_lamp();
-			task_check_distance();
-			break;
+	while(mode == NORMAL_MODE){
+		clock_gettime(CLOCK_REALTIME, &start);
+		switch(secondary_cycle){
+			case 0:
+				task_mix();
+				task_slope();
+				task_speed();
+				task_check_distance();
+				task_gas();
+				task_brk();
+				task_ligth();
+				task_lamp();
+				break;
+			case 1:
+				task_slope();
+				task_speed();
+				task_check_distance();
+				task_gas();
+				task_brk();
+				task_ligth();
+				task_lamp();
+				break;
+		}
+		secondary_cycle = (secondary_cycle + 1) % 2;
+		clock_gettime(CLOCK_REALTIME, &end);
+		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+		sleep(9 - elapsed_time);
 	}
-	secondary_cycle = (secondary_cycle + 1) % 5;
-	clock_gettime(CLOCK_REALTIME, &end);
-	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-	sleep(9 - elapsed_time);
 }
 
-void break_mode(){
-	task_slope();
-	task_speed();
-	task_check_distance();
-	task_gas();
-	task_brk();
-	task_mix();
-	task_on_lamps();
+void brake_mode(){
+    int secondary_cycle = 0;
+	long elapsed_time = 0;
+	struct timespec start, end;
+	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	while(mode == BRAKE_MODE){
+		clock_gettime(CLOCK_REALTIME, &start);
+		switch(secondary_cycle){
+			case 0:
+				task_mix();
+				task_slope();
+				task_speed();
+				task_check_distance();
+				task_gas_mode_break();
+				task_brk_mode_break();
+				task_on_lamps();
+				break;
+			case 1:
+				task_slope();
+				task_speed();
+				task_check_distance();
+				task_gas_mode_break();
+				task_brk_mode_break();
+				task_on_lamps();
+				break;
+		}
+		secondary_cycle = (secondary_cycle + 1) % 2;
+		clock_gettime(CLOCK_REALTIME, &end);
+		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+		sleep(7 - elapsed_time);
+	}
 }
 
 
-void stop_mode(){
-	task_check_moving();
-	task_mix();
-	task_on_lamps();
+void stopped_mode(){
+    int secondary_cycle = 0;
+	long elapsed_time = 0;
+	struct timespec start, end;
+	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	while(mode == STOPPED_MODE){
+		clock_gettime(CLOCK_REALTIME, &start);
+		switch(secondary_cycle){
+			case 0:
+				task_mix();
+				task_check_moving();
+				task_on_lamps();
+				break;
+			case 1:
+				task_check_moving();
+				task_on_lamps();
+				break;
+			case 2:
+				task_check_moving();
+				task_on_lamps();
+				break;
+		}
+		secondary_cycle = (secondary_cycle + 1) % 3;
+		clock_gettime(CLOCK_REALTIME, &end);
+		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
+		sleep(5 - elapsed_time);
+	}
 
 }
 
@@ -597,17 +621,15 @@ void *controller(void *arg)
 
     while(1) {
     	switch(mode){
-    		case 0:
+    		case NORMAL_MODE:
     			normal_mode();
     			break;
-    		case 1:
-    			break_mode();
+    		case BRAKE_MODE:
+    			brake_mode();
     			break;
-    		case 2:
-    			stop_mode();
+    		case STOPPED_MODE:
+    			stopped_mode();
     			break;
-    		case 3:
-    			emergency_mode();
     	}
 
     }
