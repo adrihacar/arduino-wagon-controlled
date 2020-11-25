@@ -47,7 +47,7 @@ int mode= 0; //0->NORMAL, 1-->BRAKING MODE, 2 --> STOPPED MODE
 int distance = 2000;
 int distance_limit = 11000; //distance limit
 #define NORMAL_MODE 0
-#define BRAKING_MODE 1
+#define BRAKE_MODE 1
 #define STOPPED_MODE 2
 
 
