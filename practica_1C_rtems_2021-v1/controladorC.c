@@ -341,7 +341,7 @@ int task_check_distance()
 	memset(answer, '\0', 10);
 
 	// request distance
-	strcpy(request, "DS  REQ\n");
+	strcpy(request, "DS:  REQ\n");
 
 #ifdef RASPBERRYPI
 	// use Raspberry Pi I2C serial module
@@ -356,10 +356,10 @@ int task_check_distance()
 	// display distance
 	if (1 == sscanf (answer, "DS:%i\n", &distance)){
 		if(distance == 0){
-			mode=2;
+			mode = STOPPED_MODE;
 		}
 		else if(distance < distance_limit){
-			mode =1;  //CHANGE MODE
+			mode = BRAKE_MODE;
 		}
 		displayDistance(distance);
 	}
@@ -382,7 +382,7 @@ int task_check_moving(){
 	memset(answer, '\0', 10);
 
 	// request distance
-	strcpy(request, "STP REQ\n");
+	strcpy(request, "STP: REQ\n");
 
 #ifdef RASPBERRYPI
 	// use Raspberry Pi I2C serial module
@@ -396,7 +396,7 @@ int task_check_moving(){
 
 	// display distance
 	if (0 == strcmp(answer, "STP:  GO\n")){
-		mode = 0;
+		mode = NORMAL_MODE;
 		displayStop(0);
 	}
 	if (0 == strcmp(answer, "SLP:STOP\n")){
@@ -691,6 +691,3 @@ rtems_task Init (rtems_task_argument ignored)
 
 #define CONFIGURE_INIT
 #include <rtems/confdefs.h>
-
-
-
