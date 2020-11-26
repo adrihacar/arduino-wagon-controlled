@@ -17,7 +17,7 @@
 #endif
 
 
-#include "displayC.h"
+#include "displayD.h"
 
 #define BILLION  1E9
 /**********************************************************
@@ -59,7 +59,7 @@ int emergency_sent = 0;
  *********************************************************/
 int task_ligth()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
@@ -106,7 +106,7 @@ int task_ligth()
  *********************************************************/
 int task_lamp()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
@@ -149,7 +149,7 @@ int task_lamp()
  *********************************************************/
 int task_mix()
 {
-	long elapsed_time = 0;
+	long task__time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -199,7 +199,7 @@ int task_mix()
  *********************************************************/
 int task_gas()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -249,7 +249,7 @@ int task_gas()
  *********************************************************/
 int task_brk()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -300,7 +300,7 @@ int task_brk()
  *********************************************************/
 int task_speed()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -345,7 +345,7 @@ int task_speed()
 //-------------------------------------
 int task_slope()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -389,7 +389,7 @@ int task_slope()
 //read the distance and changes the mode accordinly
 int task_check_distance()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -438,7 +438,7 @@ int task_check_distance()
 
 //read if moving and change state to stop.
 int task_check_moving(){
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -483,7 +483,7 @@ int task_check_moving(){
 }
 
 int task_on_lamps(){
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
     char request[10];
@@ -519,7 +519,7 @@ int task_on_lamps(){
 
 //break mode
 int task_brk_mode_brake(){
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -533,7 +533,7 @@ int task_brk_mode_brake(){
 	memset(answer, '\0', 10);
 
 	//avoid go less than 5 m/s
-	if (8 < speed){
+	if (2.5 < speed){
 		brk=1;
 		strcpy(request, "BRK: SET\n");
 	}else{
@@ -566,7 +566,7 @@ int task_brk_mode_brake(){
 
 int task_gas_mode_brake()
 {
-	long elapsed_time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -581,7 +581,7 @@ int task_gas_mode_brake()
 	memset(answer, '\0', 10);
 
 	// request gas
-	if (speed < 5){
+	if (speed < 2.5){
 		strcpy(request, "GAS: SET\n");
 		gas = 1;
 	}else{

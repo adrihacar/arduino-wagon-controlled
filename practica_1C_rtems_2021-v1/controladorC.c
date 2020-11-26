@@ -445,8 +445,8 @@ int task_brk_mode_brake(){
 	memset(request, '\0', 10);
 	memset(answer, '\0', 10);
 
-	//avoid go less than 5 m/s
-	if (8 < speed){
+	//mantain in 2.5
+	if (2.5 < speed){
 		brk=1;
 		strcpy(request, "BRK: SET\n");
 	}else{
@@ -486,7 +486,7 @@ int task_gas_mode_brake()
 	memset(answer, '\0', 10);
 
 	// request gas
-	if (speed < 5){
+	if (speed < 2.5){
 		strcpy(request, "GAS: SET\n");
 		gas = 1;
 	}else{
