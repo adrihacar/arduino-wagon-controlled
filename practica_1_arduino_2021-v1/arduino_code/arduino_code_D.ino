@@ -422,7 +422,7 @@ int show_distance(){
 }
 
 // --------------------------------------
-// Function: validator_distance
+// Function: validator_distance XXX
 // --------------------------------------
 int validator_distance(){
 
@@ -431,7 +431,7 @@ int validator_distance(){
   if(value == 1 && button_old == 0) {
     pushed  = 1;
   }
-  if(pushed = 1 && value == 0){
+  else if(pushed == 1 && value == 0){
      pushed = 0;
      if(mode == 0){
        mode = 1;
