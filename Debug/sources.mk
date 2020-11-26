@@ -16,5 +16,6 @@ SUBDIRS := \
 practica_1A_rtems_2021-v1 \
 practica_1B_rtems_2021-v1 \
 practica_1C_rtems_2021-v1 \
+practica_1D_rtems_2021-v1 \
 practica_1_arduino_2021-v1/extras/rtems_msg_router \
 

@@ -36,6 +36,7 @@ int fd_i2c = -1;
 int mix = 0;
 int gas = 0;
 int brk = 0;
+int mixer_timer = 0;
 
 
 /**********************************************************
@@ -54,14 +55,17 @@ int task_mix()
     memset(request, '\0', 10);
     memset(answer, '\0', 10);
 
-    // request gas
-    if (mix == 0){
-    	strcpy(request, "MIX: SET\n");
-    	mix = 1;
-    }else{
-    	strcpy(request, "MIX: CLR\n");
-    	mix = 0;
-    }
+	// request mixer
+	if (45 <= mixer_timer){
+		if (mix == 0){
+			strcpy(request, "MIX: SET\n");
+			mix = 1;
+		}else{
+			strcpy(request, "MIX: CLR\n");
+			mix = 0;
+		}
+		mixer_timer = 0;
+	}
 
 #ifdef RASPBERRYPI
     // use Raspberry Pi I2C serial module
@@ -98,7 +102,7 @@ int task_gas()
     memset(answer, '\0', 10);
 
     // request gas
-    if (speed < 50){
+    if (speed < 55){
     	strcpy(request, "GAS: SET\n");
     	gas = 1;
     }else{
@@ -140,7 +144,7 @@ int task_brk()
     memset(answer, '\0', 10);
 
     // request gas
-    if (60 < speed){
+    if (55 < speed){
     	strcpy(request, "BRK: SET\n");
     }else{
     	strcpy(request, "BRK: CLR\n");
@@ -286,6 +290,7 @@ void *controller(void *arg)
     	clock_gettime(CLOCK_REALTIME, &end);
     	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
     	sleep(9 - elapsed_time);
+        mixer_timer = mixer_timer + 9;
     }
 }
 
