@@ -98,7 +98,7 @@ int task_gas()
     memset(answer, '\0', 10);
 
     // request gas
-    if (speed < 50){
+    if (speed < 55){
     	strcpy(request, "GAS: SET\n");
     	gas = 1;
     }else{
@@ -140,7 +140,7 @@ int task_brk()
     memset(answer, '\0', 10);
 
     // request gas
-    if (60 < speed){
+    if (55 < speed){
     	strcpy(request, "BRK: SET\n");
     }else{
     	strcpy(request, "BRK: CLR\n");
