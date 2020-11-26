@@ -302,7 +302,7 @@ void loop()
    }
    sc = (sc + 1) % 2;
    double end = millis();
-   delay(0.1-(end-start));
+   delay(100-(end-start));
     
    
 }

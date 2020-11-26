@@ -570,11 +570,10 @@ void loop()
          lamp_req();
          show_distance();
          break;
-
+     }
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(0.1-(end-start));      }
-
+      delay(100-(end-start));  
    } else if(mode = 1){
       double start = millis();
       switch (sc)
@@ -630,10 +629,10 @@ void loop()
          emergency_req();
          break;
 
+      }
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(0.1-(end-start));      }
-
+      delay(100-(end-start));  
    } else if(mode = 2){
       double start = millis();
       switch (sc)
@@ -681,10 +680,10 @@ void loop()
          ligth_req();
          emergency_req();
          break;
-
+      }
       sc = (sc + 1) % 5;
       double end = millis();
-      delay(0.1-(end-start));      }
+      delay(100-(end-start));  
    } else if(mode = 3){
       double start = millis();
       
@@ -695,7 +694,9 @@ void loop()
       get_slope();
       show_speed();
       
+      sc = (sc + 1) % 5;
       double end = millis();
-      delay(0.1-(end-start));      
+      delay(100-(end-start));  
       }
+     
 }
