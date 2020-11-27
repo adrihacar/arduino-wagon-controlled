@@ -877,8 +877,8 @@ void emergency_mode(){
 				break;
 			case 1:
 				task_on_lamps();
-				task_gas_mode_brake();
-				task_brk_mode_brake();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
 				break;
 			case 2:
 				task_on_lamps();
@@ -890,8 +890,8 @@ void emergency_mode(){
 				break;
 			case 3:
 				task_on_lamps();
-				task_gas_mode_brake();
-				task_brk_mode_brake();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
 				task_mix();
 				break;
 			case 4:
@@ -904,8 +904,8 @@ void emergency_mode(){
 				break;
 			case 5:
 				task_on_lamps();
-				task_gas_mode_brake();
-				task_brk_mode_brake();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
 				break;
 				
 		}
