@@ -96,7 +96,7 @@ int task_ligth()
     }
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
     return 0;
@@ -139,7 +139,7 @@ int task_lamp()
     displayLamps(is_dark);
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
     return 0;
@@ -150,7 +150,7 @@ int task_lamp()
  *********************************************************/
 int task_mix()
 {
-	long task__time = 0;
+	long task_time = 0;
 	struct timespec taskstart, taskend;
 	clock_gettime(CLOCK_REALTIME, &taskstart);
 	char request[10];
@@ -192,7 +192,7 @@ int task_mix()
 	//}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -242,7 +242,7 @@ int task_gas()
 	//}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -292,7 +292,7 @@ int task_brk()
 	//}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -338,7 +338,7 @@ int task_speed()
 
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -383,7 +383,7 @@ int task_slope()
 
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -432,7 +432,7 @@ int task_check_distance()
 	}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -479,7 +479,7 @@ int task_check_moving(){
 	}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -515,7 +515,7 @@ int task_on_lamps(){
     displayLamps(is_dark);
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
     return 0;
@@ -562,7 +562,7 @@ int task_brk_mode_brake(){
 	//}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
@@ -609,14 +609,14 @@ int task_gas_mode_brake()
 	//}
 	clock_gettime(CLOCK_REALTIME, &taskend);
 	task_time = ( taskend.tv_sec - taskstart.tv_sec ) + ( taskend.tv_nsec - taskstart.tv_nsec )/ BILLION;
-	if (0,9 < task_time){
+	if (0.9 < task_time){
 		mode = EMERGENCY_MODE;
 	}
 	return 0;
 }
 
 //emergency mode
-void task_send_emergency(){
+int task_send_emergency(){
 	char request[10];
 	char answer[10];
 
@@ -715,35 +715,58 @@ void normal_mode(){
 	int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	// Endless loop. Main cycle 30 seconds, secondary cycle 5 seconds
 	while(mode == NORMAL_MODE){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
 			case 0:
+				task_ligth();
+    			task_lamp();
+    			task_speed();
+    			task_slope();
+				task_check_distance();
+    			break;
+    		case 1:
+				task_ligth();
+    			task_lamp();
+				task_gas();
+    			task_brk();
 				task_mix();
-				task_slope();
-				task_speed();
-				task_check_distance();
-				task_gas();
-				task_brk();
+    			break;
+    		case 2:
 				task_ligth();
-				task_lamp();
-				break;
-			case 1:
-				task_slope();
+    			task_lamp();
 				task_speed();
+    			task_slope();
 				task_check_distance();
-				task_gas();
-				task_brk();
+    			break;
+    		case 3:
 				task_ligth();
-				task_lamp();
-				break;
+    			task_lamp();
+				task_gas();
+    			task_brk();
+				task_mix();
+    			break;
+    		case 4:
+				task_ligth();
+    			task_lamp();
+				task_speed();
+    			task_slope();
+				task_check_distance();
+    			break;
+    		case 5:
+				task_ligth();
+    			task_lamp();
+				task_gas();
+    			task_brk();
+				task_mix();
+    			break;
 		}
-		secondary_cycle = (secondary_cycle + 1) % 2;
+		secondary_cycle = (secondary_cycle + 1) % 6;
 		clock_gettime(CLOCK_REALTIME, &end);
 		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-		sleep(9 - elapsed_time);
-		mixer_timer = mixer_timer + 9;
+		sleep(5 - elapsed_time);
+		mixer_timer = mixer_timer + 5;
 	}
 }
 
@@ -751,33 +774,56 @@ void brake_mode(){
     int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	// Endless loop. Main cycle 30 seconds, secondary cycle 5 seconds
 	while(mode == BRAKE_MODE){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
 			case 0:
-				task_mix();
-				task_slope();
 				task_speed();
-				task_check_distance();
 				task_gas_mode_brake();
 				task_brk_mode_brake();
-				task_on_lamps();
+				task_slope();
+				task_mix();
 				break;
 			case 1:
-				task_slope();
 				task_speed();
-				task_check_distance();
 				task_gas_mode_brake();
 				task_brk_mode_brake();
+				task_check_distance();
 				task_on_lamps();
 				break;
+			case 2:
+				task_speed();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
+				task_slope();
+				break;
+			case 3:
+				task_speed();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
+				task_check_distance();
+				task_mix();
+				
+				break;
+			case 4:
+				task_speed();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
+				task_slope();
+				break;
+			case 5:
+				task_speed();
+				task_gas_mode_brake();
+				task_brk_mode_brake();
+				task_check_distance();
+				break;
 		}
-		secondary_cycle = (secondary_cycle + 1) % 2;
+		secondary_cycle = (secondary_cycle + 1) % 6;
 		clock_gettime(CLOCK_REALTIME, &end);
 		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-		sleep(7 - elapsed_time);
-		mixer_timer = mixer_timer + 7;
+		sleep(5 - elapsed_time);
+		mixer_timer = mixer_timer + 5;
 	}
 }
 
@@ -786,7 +832,7 @@ void stopped_mode(){
     int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	// Endless loop. Main cycle 15 seconds, secondary cycle 5 seconds
 	while(mode == STOPPED_MODE){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
@@ -810,43 +856,64 @@ void stopped_mode(){
 		sleep(5 - elapsed_time);
 		mixer_timer = mixer_timer + 5;
 	}
-
 }
 
 void emergency_mode(){
     int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-	// Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+	// Endless loop. Main cycle 30 seconds, secondary cycle 5 seconds
 	while(1){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
 			case 0:
+				task_on_lamps();
+				task_slope();
+				task_speed();
 				if (emergency_sent == 0){
 					task_send_emergency();
 				}
 				task_mix();
-				task_slope();
-				task_speed();
-				task_check_distance();
-				task_gas_mode_emergency();
-				task_brk_mode_emergency();
-				task_on_lamps();
 				break;
 			case 1:
+				task_on_lamps();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
+				break;
+			case 2:
+				task_on_lamps();
 				task_slope();
 				task_speed();
-				task_check_distance();
-				task_gas_mode_brake();
-				task_brk_mode_brake();
-				task_on_lamps();
+				if (emergency_sent == 0){
+					task_send_emergency();
+				}
 				break;
+			case 3:
+				task_on_lamps();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
+				task_mix();
+				break;
+			case 4:
+				task_on_lamps();
+				task_slope();
+				task_speed();
+				if (emergency_sent == 0){
+					task_send_emergency();
+				}
+				break;
+			case 5:
+				task_on_lamps();
+				task_gas_mode_emergency();
+				task_brk_mode_emergency();
+				break;
+				
 		}
-		secondary_cycle = (secondary_cycle + 1) % 2;
+		secondary_cycle = (secondary_cycle + 1) % 6;
 		clock_gettime(CLOCK_REALTIME, &end);
 		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-		sleep(7 - elapsed_time);
-		mixer_timer = mixer_timer + 7;
+		sleep(5 - elapsed_time);
+		mixer_timer = mixer_timer + 5;
 	}
 }
 

@@ -146,8 +146,10 @@ int task_brk()
     // request gas
     if (55 < speed){
     	strcpy(request, "BRK: SET\n");
+    	brk=1;
     }else{
     	strcpy(request, "BRK: CLR\n");
+    	brk=0;
     }
 
 #ifdef RASPBERRYPI
@@ -246,51 +248,22 @@ int task_slope()
 //-------------------------------------
 void *controller(void *arg)
 {
-	int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-    // Endless loop. Main cycle 45 seconds, secondary cycle 9 seconds
+    // Endless loop. Main cycle 5 seconds, secondary cycle 5 seconds
     while(1) {
     	clock_gettime(CLOCK_REALTIME, &start);
-    	switch(secondary_cycle){
 
-    		case 0:
-    			task_mix();
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			break;
-    		case 1:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			break;
-    		case 2:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			break;
-    		case 3:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			break;
-    		case 4:
-    			task_speed();
-    			task_slope();
-    			task_gas();
-    			task_brk();
-    			break;
-    	}
-    	secondary_cycle = (secondary_cycle + 1) % 5;
+        task_mix();
+        task_speed();
+        task_slope();
+        task_gas();
+        task_brk();
+
     	clock_gettime(CLOCK_REALTIME, &end);
     	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
-    	sleep(9 - elapsed_time);
-        mixer_timer = mixer_timer + 9;
+    	sleep(5 - elapsed_time);
+        mixer_timer = mixer_timer + 5;
     }
 }
 
