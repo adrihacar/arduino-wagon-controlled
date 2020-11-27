@@ -360,6 +360,7 @@ void *controller(void *arg)
     			task_lamp();
 				task_gas();
     			task_brk();
+				task_mix();
     			break;
     		case 4:
 				task_ligth();

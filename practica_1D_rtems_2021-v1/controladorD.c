@@ -745,6 +745,7 @@ void normal_mode(){
     			task_lamp();
 				task_gas();
     			task_brk();
+				task_mix();
     			break;
     		case 4:
 				task_ligth();
@@ -758,6 +759,7 @@ void normal_mode(){
     			task_lamp();
 				task_gas();
     			task_brk();
+				task_mix();
     			break;
 		}
 		secondary_cycle = (secondary_cycle + 1) % 6;
