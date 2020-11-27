@@ -193,7 +193,7 @@ int mixer_req()
    if ( (request_received) &&
         (0 == strcmp("MIX: SET",request)) ) {
            mixer = 1;
-           digitalWrite(10, mixer);
+           digitalWrite(11, mixer);
            request_received = false;
            answer_requested = true;
         }
@@ -201,7 +201,7 @@ int mixer_req()
       else if( (request_received) &&
         (0 == strcmp("MIX: CLR",request)) ){
            mixer = 0;
-           digitalWrite(10, mixer);
+           digitalWrite(11, mixer);
            request_received = false;
            answer_requested = true;
         }
@@ -292,5 +292,5 @@ void loop()
     slope_req();
    //Chechealr internamente los datos - Pagar luces, leer slope, velociad, etc.
     show_speed();
-    check_slope();
+    get_slope();
 }

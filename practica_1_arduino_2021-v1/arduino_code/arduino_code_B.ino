@@ -132,7 +132,7 @@ int ligth_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("LIT: REQ",request)) ) {
-      char num_str[5];
+      char num_str[3];
       dtostrf(ligth,3,1,num_str);
       // send the answer for slope request
       sprintf(answer,"LIT:%s%%",ligth);
@@ -203,7 +203,7 @@ int mixer_req()
    if ( (request_received) &&
         (0 == strcmp("MIX: SET",request)) ) {
            mixer = 1;
-           digitalWrite(10, mixer);
+           digitalWrite(11, mixer);
            request_received = false;
            answer_requested = true;
            sprintf(answer,"MIX:  OK");
@@ -212,7 +212,7 @@ int mixer_req()
       else if( (request_received) &&
         (0 == strcmp("MIX: CLR",request)) ){
            mixer = 0;
-           digitalWrite(10, mixer);
+           digitalWrite(11, mixer);
            request_received = false;
            answer_requested = true;
            sprintf(answer,"MIX:  OK");
@@ -346,7 +346,7 @@ void loop()
    case 0:
       //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
       show_speed();
-      check_slope();
+      get_slope();
       get_ligth();
       //para cuando se lo piden, hacer/devolverlo
       mixer_req();
@@ -358,7 +358,7 @@ void loop()
    case 1:
       //Checkear internamente los datos - Pagar luces, leer slope, velociad, etc.
       show_speed();
-      check_slope();
+      get_slope();
       get_ligth();
       //para cuando se lo piden, hacer/devolverlo
       speed_req();
