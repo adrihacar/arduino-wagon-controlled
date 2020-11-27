@@ -520,7 +520,7 @@ void normal_mode(){
 	int secondary_cycle = 0;
 	long elapsed_time = 0;
 	struct timespec start, end;
-	// Endless loop. Main cycle 30 seconds, secondary cycle 5 seconds
+	// Endless loop. Main cycle 10 seconds, secondary cycle 5 seconds
 	while(mode == NORMAL_MODE){
 		clock_gettime(CLOCK_REALTIME, &start);
 		switch(secondary_cycle){
@@ -529,45 +529,17 @@ void normal_mode(){
     			task_lamp();
     			task_speed();
     			task_slope();
-				task_check_distance();
+				task_gas();
     			break;
     		case 1:
 				task_ligth();
     			task_lamp();
-				task_gas();
-    			task_brk();
-				task_mix();
-    			break;
-    		case 2:
-				task_ligth();
-    			task_lamp();
-				task_speed();
-    			task_slope();
+				task_brk();
+    			task_mix();
 				task_check_distance();
-    			break;
-    		case 3:
-				task_ligth();
-    			task_lamp();
-				task_gas();
-    			task_brk();
-				task_mix();
-    			break;
-    		case 4:
-				task_ligth();
-    			task_lamp();
-				task_speed();
-    			task_slope();
-				task_check_distance();
-    			break;
-    		case 5:
-				task_ligth();
-    			task_lamp();
-				task_gas();
-    			task_brk();
-				task_mix();
     			break;
 		}
-		secondary_cycle = (secondary_cycle + 1) % 6;
+		secondary_cycle = (secondary_cycle + 1) % 2;
 		clock_gettime(CLOCK_REALTIME, &end);
 		elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
 		sleep(5 - elapsed_time);
