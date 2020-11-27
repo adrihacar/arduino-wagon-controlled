@@ -160,11 +160,14 @@ int ligth_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("LIT: REQ",request)) ) {
-      char num_str[3];
-      dtostrf(ligth,3,1,num_str);
-      // send the answer for slope request
-      sprintf(answer,"LIT:%s%%",ligth);
-
+     char cstr[5];
+	 itoa(ligth, cstr, 10);
+     
+     if(ligth>=10){
+       sprintf(answer,"LIT: %s%%",cstr);
+     } else {
+       sprintf(answer,"LIT: 0%s%%",cstr);
+     }
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
       request_received = false;
@@ -203,11 +206,23 @@ int distance_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("DS:  REQ",request)) ) {
-      char num_str[5];
-      dtostrf(distance,5,1,num_str);
-      // send the answer for slope request
-      sprintf(answer,"DS:%s",num_str);
 
+      char cstr[5];
+	   itoa(distance, cstr, 10);
+     
+     if(distance<=0){
+       sprintf(answer,"DS:00000");
+     } else if(distance > 0 && distance < 10){
+       sprintf(answer,"DS:0000%s",cstr);
+     } else if(distance >= 10 && distance < 100){
+       sprintf(answer,"DS:000%s",cstr);
+     } else if(distance >= 100 && distance < 1000){
+       sprintf(answer,"DS:00%s",cstr);
+     } else if(distance >= 1000 && distance < 10000){
+       sprintf(answer,"DS:0%s",cstr);
+     } else if(distance >= 10000){
+       sprintf(answer,"DS:%s",cstr);
+     }
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
       request_received = false;

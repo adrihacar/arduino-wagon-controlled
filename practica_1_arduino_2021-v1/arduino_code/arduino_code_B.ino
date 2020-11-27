@@ -132,11 +132,14 @@ int ligth_req()
    // while there is enough data for a request
    if ( (request_received) &&
         (0 == strcmp("LIT: REQ",request)) ) {
-      char num_str[3];
-      dtostrf(ligth,3,1,num_str);
-      // send the answer for slope request
-      sprintf(answer,"LIT:%s%%",ligth);
-
+     char cstr[5];
+	  itoa(ligth, cstr, 10);
+     
+     if(ligth>=10){
+       sprintf(answer,"LIT: %s%%",cstr);
+     } else {
+       sprintf(answer,"LIT: 0%s%%",cstr);
+     }
       // set buffers and flags
       memset(request,'\0', MESSAGE_SIZE+1);
       request_received = false;
