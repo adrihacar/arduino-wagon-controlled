@@ -146,8 +146,10 @@ int task_brk()
     // request gas
     if (55 < speed){
     	strcpy(request, "BRK: SET\n");
+    	brk=1;
     }else{
     	strcpy(request, "BRK: CLR\n");
+    	brk=0;
     }
 
 #ifdef RASPBERRYPI

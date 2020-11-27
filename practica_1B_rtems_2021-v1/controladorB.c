@@ -378,7 +378,7 @@ void *controller(void *arg)
     	clock_gettime(CLOCK_REALTIME, &end);
     	elapsed_time = ( end.tv_sec - start.tv_sec ) + ( end.tv_nsec - start.tv_nsec )/ BILLION;
     	sleep(5 - elapsed_time);
-		mixer_timer = mixer_timer + 5
+		mixer_timer = mixer_timer + 5;
     }
 }
 
