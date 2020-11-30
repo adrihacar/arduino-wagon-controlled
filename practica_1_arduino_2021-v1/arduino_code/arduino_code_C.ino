@@ -113,10 +113,7 @@ int slope_req()
 {
    // while there is enough data for a request
    if ( (request_received) &&
-        (0 == st1; // 1 millisecond
-double t_distance = 0.1;
-int pushed = 0;
-rcmp("SLP: REQ",request)) ) {
+        (0 == strcmp("SLP: REQ",request)) ) {
            if(slope == 0){
             // send the answer for slope request
             sprintf(answer,"SLP:FLAT");
@@ -170,9 +167,9 @@ int stop_req()
    if ( (request_received) &&
         (0 == strcmp("STP: REQ",request)) ) {
       if(mode != 2){
-         sprintf(answer,"STP:  GO",num_str);
+         sprintf(answer,"STP:  GO");
       } else {
-         sprintf(answer,"STP:STOP",num_str);
+         sprintf(answer,"STP:STOP");
       }
 
       // set buffers and flags
@@ -193,7 +190,7 @@ int distance_req()
         (0 == strcmp("DS:  REQ",request)) ) {
 
       char cstr[5];
-	   itoa(distance, cstr, 10);
+	   ltoa(distance, cstr, 10);
      
      if(distance<=0){
        sprintf(answer,"DS:00000");
@@ -421,7 +418,7 @@ int validator_distance(){
 
   int value = 0;
   value = digitalRead(6); 
-  if(value == 1 && button_old == 0) {
+  if(value == 1 && pushed == 0) {
     pushed  = 1;
   }
   else if(pushed == 1 && value == 0){
@@ -510,7 +507,7 @@ void setup()
 // --------------------------------------
 void loop()
 {
-   if(mode = 0){
+   if(mode == 0){
       double start = millis();
       switch (sc)
       {
@@ -569,7 +566,7 @@ void loop()
       double end = millis();
       delay(100-(end-start));  
 
-   } else if(mode = 1){
+   } else if(mode == 1){
       double start = millis();
       switch (sc)
       {
@@ -626,7 +623,7 @@ void loop()
       sc = (sc + 1) % 5;
       double end = millis();
       delay(100-(end-start));   
-   } else if(mode = 2){
+   } else if(mode == 2){
       double start = millis();
       switch (sc)
       {

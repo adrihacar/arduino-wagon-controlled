@@ -208,7 +208,7 @@ int distance_req()
         (0 == strcmp("DS:  REQ",request)) ) {
 
       char cstr[5];
-	   itoa(distance, cstr, 10);
+	   ltoa(distance, cstr, 10);
      
      if(distance<=0){
        sprintf(answer,"DS:00000");
@@ -531,7 +531,7 @@ void setup()
 // --------------------------------------
 void loop()
 {
-   if(mode = 0){
+   if(mode == 0){
       double start = millis();
       switch (sc)
       {
@@ -589,7 +589,7 @@ void loop()
       sc = (sc + 1) % 5;
       double end = millis();
       delay(100-(end-start));  
-   } else if(mode = 1){
+   } else if(mode == 1){
       double start = millis();
       switch (sc)
       {
@@ -648,7 +648,7 @@ void loop()
       sc = (sc + 1) % 5;
       double end = millis();
       delay(100-(end-start));  
-   } else if(mode = 2){
+   } else if(mode == 2){
       double start = millis();
       switch (sc)
       {
@@ -699,7 +699,7 @@ void loop()
       sc = (sc + 1) % 5;
       double end = millis();
       delay(100-(end-start));  
-   } else if(mode = 3){
+   } else if(mode == 3){
       double start = millis();
       
       acc_req();
